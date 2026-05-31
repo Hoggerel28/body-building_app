@@ -1,0 +1,28 @@
+# 依赖与构建产物
+node_modules/
+dist/
+build/
+
+# 日志与临时文件
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.cache/
+tmp/
+temp/
+
+# 系统/编辑器文件
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# 本地测试截图、录屏、导出文件
+fittrack-preview.png
+*.webm
+*.mp4
+
+# 本地环境配置
+.env
+.env.*
