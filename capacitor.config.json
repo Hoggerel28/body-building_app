@@ -1,0 +1,8 @@
+{
+  "appId": "com.fittrack.app",
+  "appName": "练了没",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  }
+}

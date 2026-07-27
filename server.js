@@ -5,6 +5,12 @@ const path = require("path");
 const root = __dirname;
 const host = "127.0.0.1";
 const port = 4173;
+const publicFiles = new Set([
+  "index.html",
+  "app.js",
+  "styles.css",
+  path.join("src", "lib", "supabase.js"),
+]);
 const types = {
   ".html": "text/html; charset=utf-8",
   ".css": "text/css; charset=utf-8",
@@ -14,13 +20,27 @@ const types = {
 };
 
 const server = http.createServer((req, res) => {
-  const urlPath = decodeURIComponent(req.url.split("?")[0]);
+  let urlPath;
+  try {
+    urlPath = decodeURIComponent(req.url.split("?")[0]);
+  } catch {
+    res.writeHead(400, { "Content-Type": "text/plain; charset=utf-8" });
+    res.end("Bad request");
+    return;
+  }
   const safePath = path.normalize(urlPath === "/" ? "index.html" : urlPath.replace(/^\/+/, ""));
-  const filePath = path.join(root, safePath);
+  const filePath = path.resolve(root, safePath);
+  const relative = path.relative(root, filePath);
 
-  if (!filePath.startsWith(root)) {
+  if (relative.startsWith("..") || path.isAbsolute(relative)) {
     res.writeHead(403, { "Content-Type": "text/plain; charset=utf-8" });
     res.end("Forbidden");
+    return;
+  }
+
+  if (!publicFiles.has(relative)) {
+    res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
+    res.end("Not found");
     return;
   }
 

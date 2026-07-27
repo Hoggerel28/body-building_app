@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 1200 760"
+     role="img"
+     aria-labelledby="muscle-map-title muscle-map-desc"
+     class="muscle-map muscle-map--male">
+  <title id="muscle-map-title">Male front and back muscle anatomy map</title>
+  <desc id="muscle-map-desc">Original neutral male muscle anatomy map with front and back training zones.</desc>
+
+  <style>
+    .muscle-map {
+      --paper: #fbfbf7;
+      --band: #f1f3f4;
+      --outline: #4a515b;
+      --skin: #fbfaf6;
+      --line: #68707b;
+      --line-soft: rgba(86, 95, 106, .32);
+      --tone-light: #d4d7db;
+      --tone: #b9bec5;
+      --tone-mid: #9fa6af;
+      --tone-deep: #858d98;
+      --tone-dark: #717a86;
+      --cut-color: #18bfae;
+      --bulk-color: #ff684b;
+      --cut-active: 0;
+      --bulk-active: 0;
+    }
+
+    .page-bg {
+      fill: transparent;
+    }
+
+    .anatomy-band {
+      fill: var(--band);
+      opacity: .95;
+    }
+
+    .floor {
+      fill: #e2e5ea;
+      opacity: .72;
+    }
+
+    .label {
+      fill: #7d8795;
+      font-family: Arial, "Microsoft YaHei", sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 6px;
+    }
+
+    .silhouette {
+      fill: #f6f6f2;
+      stroke: var(--outline);
+      stroke-width: 2.3;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+    }
+
+    .skin {
+      fill: var(--skin);
+      stroke: var(--outline);
+      stroke-width: 2;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+    }
+
+    .muscle {
+      cursor: pointer;
+      outline: none;
+      transform-box: fill-box;
+      transform-origin: center;
+      transition: filter 160ms ease, transform 160ms ease;
+    }
+
+    .muscle:hover,
+    .muscle:focus-visible {
+      filter: brightness(1.08) drop-shadow(0 0 5px rgba(40, 52, 60, .24));
+    }
+
+    .zone {
+      stroke: var(--line);
+      stroke-width: 1.55;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+    }
+
+    .light { fill: var(--tone-light); }
+    .soft { fill: var(--tone); }
+    .mid { fill: var(--tone-mid); }
+    .deep { fill: var(--tone-deep); }
+    .dark { fill: var(--tone-dark); }
+
+    .fiber,
+    .cut-line {
+      fill: none;
+      stroke: rgba(255, 255, 255, .34);
+      stroke-width: 1.15;
+      stroke-linecap: round;
+      pointer-events: none;
+    }
+
+    .cut-line {
+      stroke: var(--line-soft);
+      stroke-width: 1.3;
+    }
+
+    .cardio-ring {
+      fill: none;
+      stroke: #77818d;
+      stroke-width: 2.6;
+      stroke-linecap: round;
+      stroke-dasharray: 10 12;
+      opacity: .28;
+    }
+
+    .cardio-pulse {
+      fill: none;
+      stroke: #626b76;
+      stroke-width: 3.4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: .42;
+    }
+
+    .cut-accent,
+    .bulk-accent {
+      pointer-events: none;
+      opacity: 0;
+      mix-blend-mode: multiply;
+    }
+
+    .cut-accent {
+      fill: var(--cut-color);
+      opacity: calc(var(--cut-active) * .34);
+    }
+
+    .bulk-accent {
+      fill: var(--bulk-color);
+      opacity: calc(var(--bulk-active) * .34);
+    }
+  </style>
+
+  <defs>
+    <filter id="soft-shadow" x="-18%" y="-12%" width="136%" height="130%">
+      <feDropShadow dx="0" dy="9" stdDeviation="8" flood-color="#52606d" flood-opacity=".14"/>
+    </filter>
+  </defs>
+
+  <rect class="page-bg" x="0" y="0" width="1200" height="760"/>
+  <rect class="anatomy-band" x="0" y="116" width="1200" height="510"/>
+  <ellipse class="floor" cx="300" cy="706" rx="142" ry="24"/>
+  <ellipse class="floor" cx="880" cy="706" rx="142" ry="24"/>
+  <text class="label" x="252" y="42">FRONT</text>
+  <text class="label" x="842" y="42">BACK</text>
+
+  <g id="male-front" filter="url(#soft-shadow)">
+    <path class="silhouette" d="M300 45 C330 48 347 71 343 101 C340 127 325 145 312 158 L307 188 C350 194 397 207 429 229 C450 245 461 291 468 343 L494 442 C508 493 497 544 468 585 L450 628 L424 623 L431 561 L410 476 L398 383 L382 287 C369 264 350 253 327 248 L321 459 L368 493 L392 633 L419 697 L391 724 L352 716 L334 640 L318 556 L300 528 L282 556 L266 640 L248 716 L209 724 L181 697 L208 633 L232 493 L279 459 L273 248 C250 253 231 264 218 287 L202 383 L190 476 L169 561 L176 623 L150 628 L132 585 C103 544 92 493 106 442 L132 343 C139 291 150 245 171 229 C203 207 250 194 293 188 L288 158 C275 145 260 127 257 101 C253 71 270 48 300 45 Z"/>
+    <path class="skin" d="M300 44 C324 47 340 62 345 85 L337 128 L314 157 L307 190 L293 190 L286 157 L263 128 L255 85 C260 62 276 47 300 44 Z"/>
+    <path class="skin" d="M286 157 L314 157 L307 198 L293 198 Z"/>
+    <path class="skin" d="M104 556 L136 532 L160 638 L126 675 L96 640 Z"/>
+    <path class="skin" d="M496 556 L464 532 L440 638 L474 675 L504 640 Z"/>
+    <path class="skin" d="M181 697 L221 672 L247 715 L209 724 Z"/>
+    <path class="skin" d="M419 697 L379 672 L353 715 L391 724 Z"/>
+
+    <g id="front-cardio" class="muscle cardio" data-muscle="cardio" data-part="有氧" tabindex="0" role="button" aria-label="Cardio">
+      <ellipse class="cardio-ring" cx="300" cy="354" rx="168" ry="248"/>
+      <path class="cardio-pulse" d="M228 318 L264 318 L280 292 L307 350 L327 304 L344 318 L390 318"/>
+    </g>
+
+    <g id="front-shoulders" class="muscle shoulders" data-muscle="shoulders" data-part="肩部" tabindex="0" role="button" aria-label="Shoulders">
+      <path class="zone deep" d="M171 229 C197 210 230 202 258 212 C250 246 229 275 203 286 C178 284 154 270 144 250 C151 241 160 233 171 229 Z"/>
+      <path class="zone deep" d="M429 229 C403 210 370 202 342 212 C350 246 371 275 397 286 C422 284 446 270 456 250 C449 241 440 233 429 229 Z"/>
+      <path class="fiber" d="M167 248 C191 238 216 226 246 214"/>
+      <path class="fiber" d="M433 248 C409 238 384 226 354 214"/>
+    </g>
+
+    <g id="front-chest" class="muscle chest" data-muscle="chest" data-part="胸部" tabindex="0" role="button" aria-label="Chest">
+      <path class="zone light" d="M230 206 C251 190 284 190 299 207 L297 268 C268 273 239 266 224 249 C217 230 219 216 230 206 Z"/>
+      <path class="zone light" d="M370 206 C349 190 316 190 301 207 L303 268 C332 273 361 266 376 249 C383 230 381 216 370 206 Z"/>
+      <path class="cut-line" d="M300 207 L300 272"/>
+      <path class="fiber" d="M235 231 C254 220 275 213 296 211"/>
+      <path class="fiber" d="M365 231 C346 220 325 213 304 211"/>
+      <path class="fiber" d="M236 253 C258 250 278 252 296 263"/>
+      <path class="fiber" d="M364 253 C342 250 322 252 304 263"/>
+    </g>
+
+    <g id="front-core" class="muscle core" data-muscle="core" data-part="核心" tabindex="0" role="button" aria-label="Core">
+      <path class="zone mid" d="M252 270 L298 268 L298 327 L270 331 L256 306 Z"/>
+      <path class="zone mid" d="M348 270 L302 268 L302 327 L330 331 L344 306 Z"/>
+      <path class="zone deep" d="M265 333 L298 330 L298 389 L260 395 L246 356 Z"/>
+      <path class="zone deep" d="M335 333 L302 330 L302 389 L340 395 L354 356 Z"/>
+      <path class="zone mid" d="M262 399 L298 391 L298 461 L281 504 L252 468 Z"/>
+      <path class="zone mid" d="M338 399 L302 391 L302 461 L319 504 L348 468 Z"/>
+      <path class="zone soft" d="M224 280 L256 276 L249 404 L221 444 L205 354 Z"/>
+      <path class="zone soft" d="M376 280 L344 276 L351 404 L379 444 L395 354 Z"/>
+      <path class="cut-line" d="M300 268 L300 502"/>
+      <path class="fiber" d="M270 305 C281 300 290 299 297 301"/>
+      <path class="fiber" d="M330 305 C319 300 310 299 303 301"/>
+      <path class="fiber" d="M265 361 C277 357 288 358 297 362"/>
+      <path class="fiber" d="M335 361 C323 357 312 358 303 362"/>
+    </g>
+
+    <g id="front-arms" class="muscle arms" data-muscle="arms" data-part="手臂" tabindex="0" role="button" aria-label="Arms">
+      <path class="zone soft" d="M151 270 C169 280 188 281 200 288 L185 386 L153 421 L132 346 Z"/>
+      <path class="zone mid" d="M122 350 L153 421 L139 532 L104 566 L82 479 Z"/>
+      <path class="zone soft" d="M449 270 C431 280 412 281 400 288 L415 386 L447 421 L468 346 Z"/>
+      <path class="zone mid" d="M478 350 L447 421 L461 532 L496 566 L518 479 Z"/>
+      <path class="fiber" d="M155 292 C160 329 158 367 151 404"/>
+      <path class="fiber" d="M445 292 C440 329 442 367 449 404"/>
+      <path class="fiber" d="M119 387 C127 432 128 483 117 542"/>
+      <path class="fiber" d="M481 387 C473 432 472 483 483 542"/>
+    </g>
+
+    <g id="front-legs" class="muscle legs" data-muscle="legs" data-part="腿部" tabindex="0" role="button" aria-label="Legs">
+      <path class="zone soft" d="M233 500 L274 502 L270 639 L231 643 L206 553 Z"/>
+      <path class="zone mid" d="M278 504 L298 516 L294 641 L272 639 Z"/>
+      <path class="zone mid" d="M322 504 L302 516 L306 641 L328 639 Z"/>
+      <path class="zone soft" d="M326 502 L367 500 L394 553 L369 643 L330 639 Z"/>
+      <path class="zone deep" d="M197 649 L231 646 L221 719 L186 719 L177 691 Z"/>
+      <path class="zone dark" d="M242 647 L271 646 L258 721 L226 721 Z"/>
+      <path class="zone deep" d="M403 649 L369 646 L379 719 L414 719 L423 691 Z"/>
+      <path class="zone dark" d="M358 647 L329 646 L342 721 L374 721 Z"/>
+      <path class="fiber" d="M236 528 C229 570 229 607 232 631"/>
+      <path class="fiber" d="M364 528 C371 570 371 607 368 631"/>
+      <path class="fiber" d="M252 654 C249 680 243 703 233 718"/>
+      <path class="fiber" d="M348 654 C351 680 357 703 367 718"/>
+    </g>
+  </g>
+
+  <g id="male-back" transform="translate(580 0)" filter="url(#soft-shadow)">
+    <path class="silhouette" d="M300 45 C330 48 347 71 343 101 C340 127 325 145 312 158 L307 188 C350 194 397 207 429 229 C450 245 461 291 468 343 L494 442 C508 493 497 544 468 585 L450 628 L424 623 L431 561 L410 476 L398 383 L382 287 C369 264 350 253 327 248 L321 459 L368 493 L392 633 L419 697 L391 724 L352 716 L334 640 L318 556 L300 528 L282 556 L266 640 L248 716 L209 724 L181 697 L208 633 L232 493 L279 459 L273 248 C250 253 231 264 218 287 L202 383 L190 476 L169 561 L176 623 L150 628 L132 585 C103 544 92 493 106 442 L132 343 C139 291 150 245 171 229 C203 207 250 194 293 188 L288 158 C275 145 260 127 257 101 C253 71 270 48 300 45 Z"/>
+    <path class="skin" d="M300 44 C324 47 340 62 345 85 L337 128 L314 157 L307 190 L293 190 L286 157 L263 128 L255 85 C260 62 276 47 300 44 Z"/>
+    <path class="skin" d="M286 157 L314 157 L307 198 L293 198 Z"/>
+    <path class="skin" d="M104 556 L136 532 L160 638 L126 675 L96 640 Z"/>
+    <path class="skin" d="M496 556 L464 532 L440 638 L474 675 L504 640 Z"/>
+    <path class="skin" d="M181 697 L221 672 L247 715 L209 724 Z"/>
+    <path class="skin" d="M419 697 L379 672 L353 715 L391 724 Z"/>
+
+    <g id="back-cardio" class="muscle cardio" data-muscle="cardio" data-part="有氧" tabindex="0" role="button" aria-label="Cardio">
+      <ellipse class="cardio-ring" cx="300" cy="354" rx="168" ry="248"/>
+      <path class="cardio-pulse" d="M228 318 L264 318 L280 292 L307 350 L327 304 L344 318 L390 318"/>
+    </g>
+
+    <g id="back-shoulders" class="muscle shoulders" data-muscle="shoulders" data-part="肩部" tabindex="0" role="button" aria-label="Rear shoulders">
+      <path class="zone deep" d="M171 228 C198 210 230 202 258 213 L250 250 L215 282 C187 284 158 270 145 250 C151 241 160 233 171 228 Z"/>
+      <path class="zone deep" d="M429 228 C402 210 370 202 342 213 L350 250 L385 282 C413 284 442 270 455 250 C449 241 440 233 429 228 Z"/>
+    </g>
+
+    <g id="back-upper" class="muscle back" data-muscle="back" data-part="背部" tabindex="0" role="button" aria-label="Back">
+      <path class="zone mid" d="M268 187 L300 170 L332 187 L324 289 L300 331 L276 289 Z"/>
+      <path class="zone deep" d="M250 237 L299 333 L252 460 L193 405 L186 299 Z"/>
+      <path class="zone deep" d="M350 237 L301 333 L348 460 L407 405 L414 299 Z"/>
+      <path class="zone dark" d="M270 328 L300 337 L298 475 L251 460 Z"/>
+      <path class="zone dark" d="M330 328 L300 337 L302 475 L349 460 Z"/>
+      <path class="zone light" d="M233 207 L269 187 L263 246 L233 272 Z"/>
+      <path class="zone light" d="M367 207 L331 187 L337 246 L367 272 Z"/>
+      <path class="cut-line" d="M300 170 L300 488"/>
+      <path class="fiber" d="M254 255 C231 299 214 342 203 391"/>
+      <path class="fiber" d="M346 255 C369 299 386 342 397 391"/>
+      <path class="fiber" d="M276 206 C286 242 294 280 298 319"/>
+      <path class="fiber" d="M324 206 C314 242 306 280 302 319"/>
+    </g>
+
+    <g id="back-arms" class="muscle arms" data-muscle="arms" data-part="手臂" tabindex="0" role="button" aria-label="Rear arms">
+      <path class="zone soft" d="M151 270 C169 280 188 281 200 288 L185 386 L153 421 L132 346 Z"/>
+      <path class="zone mid" d="M122 350 L153 421 L139 532 L104 566 L82 479 Z"/>
+      <path class="zone soft" d="M449 270 C431 280 412 281 400 288 L415 386 L447 421 L468 346 Z"/>
+      <path class="zone mid" d="M478 350 L447 421 L461 532 L496 566 L518 479 Z"/>
+    </g>
+
+    <g id="back-core" class="muscle core" data-muscle="core" data-part="核心" tabindex="0" role="button" aria-label="Glutes and posterior core">
+      <path class="zone mid" d="M226 470 C251 452 287 459 298 486 L278 553 L219 545 L204 501 Z"/>
+      <path class="zone mid" d="M374 470 C349 452 313 459 302 486 L322 553 L381 545 L396 501 Z"/>
+      <path class="fiber" d="M230 498 C249 484 272 481 292 488"/>
+      <path class="fiber" d="M370 498 C351 484 328 481 308 488"/>
+    </g>
+
+    <g id="back-legs" class="muscle legs" data-muscle="legs" data-part="腿部" tabindex="0" role="button" aria-label="Posterior legs">
+      <path class="zone soft" d="M233 548 L278 553 L270 642 L234 646 L204 575 Z"/>
+      <path class="zone soft" d="M367 548 L322 553 L330 642 L366 646 L396 575 Z"/>
+      <path class="zone mid" d="M281 557 L299 563 L295 643 L272 642 Z"/>
+      <path class="zone mid" d="M319 557 L301 563 L305 643 L328 642 Z"/>
+      <path class="zone deep" d="M213 652 L244 646 L236 721 L202 721 L190 690 Z"/>
+      <path class="zone dark" d="M266 648 L294 647 L280 721 L248 721 Z"/>
+      <path class="zone deep" d="M387 652 L356 646 L364 721 L398 721 L410 690 Z"/>
+      <path class="zone dark" d="M334 648 L306 647 L320 721 L352 721 Z"/>
+      <path class="fiber" d="M244 566 C240 592 239 618 237 640"/>
+      <path class="fiber" d="M356 566 C360 592 361 618 363 640"/>
+    </g>
+  </g>
+</svg>
