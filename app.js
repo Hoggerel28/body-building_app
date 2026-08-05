@@ -61,16 +61,17 @@ const musicPlatforms = ["网易云音乐", "QQ 音乐", "酷我音乐", "酷狗�
 const bodyPartSet = new Set(bodyParts);
 const goals = ["减脂", "增肌"];
 const pageNames = ["home", "data", "plan", "feed", "friends", "music", "me"];
-const APP_VERSION = "0.2.1";
-const APP_VERSION_CODE = 2;
+const APP_VERSION = "0.2.2";
+const APP_VERSION_CODE = 3;
+const DEFAULT_DOWNLOAD_PAGE_URL = "https://hoggerel28.github.io/body-building_app/docs/";
 const LOCAL_VERSION_MANIFEST_URL = new URL("./version.json", window.location.href).href;
 const VERSION_MANIFEST_URLS = buildVersionManifestUrls();
 const BUILT_IN_VERSION_MANIFEST = {
   latestVersion: APP_VERSION,
   latestVersionCode: APP_VERSION_CODE,
-  title: "练了没 0.2.1 测试版",
-  releaseNotes: ["当前安装包已内置本版本信息。"],
-  releaseDate: "2026-07-27",
+  title: "练了没 0.2.2 正式版",
+  releaseNotes: ["新增 Supabase 后台通知和 App 内官方下载入口。"],
+  releaseDate: "2026-08-05",
   downloadPageUrl: "",
   apkUrl: "",
   mandatory: false,
@@ -85,10 +86,18 @@ const sponsorConfig = {
 };
 const appNotices = [
   {
-    id: "notice-0-2-0",
-    date: "2026-07-27",
-    title: "0.2.1 测试版",
-    text: "邮箱账号、好友、训练复盘可见性、头像同步、歌单外部打开和移动端抽屉已进入测试。",
+    id: "notice-0-2-2",
+    date: "2026-08-05",
+    title: "0.2.2 正式版",
+    text: "新增 Supabase 后台通知、App 内官方下载入口和版本检测下载引导。",
+  },
+  {
+    id: "notice-official-download",
+    date: "2026-08-05",
+    title: "官方下载地址",
+    text: "正式版安装包统一在官方下载页发布。以后有新版本时，版本检测和通知都会引导到这个地址。",
+    actionLabel: "打开官方下载页",
+    actionUrl: DEFAULT_DOWNLOAD_PAGE_URL,
   },
   {
     id: "notice-feedback",
@@ -177,6 +186,7 @@ const seed = {
     downloadUrl: "",
   },
   notificationReadIds: [],
+  remoteNotices: [],
   trainingTimer: { date: today(), elapsedSeconds: 0, startedAt: "", running: false, savedSeconds: 0, savedAt: "" },
   authMode: "login",
   editingId: null,
@@ -441,6 +451,25 @@ function normalizeFeedbackReport(item) {
   };
 }
 
+function normalizeAppNotice(item) {
+  if (!isObject(item)) return null;
+  const title = sanitizeText(item.title, 100);
+  const text = sanitizeText(item.text || item.body || item.message, 600);
+  if (!title || !text) return null;
+  const rawDate = sanitizeText(item.date || item.published_at || item.created_at || today(), 40);
+  const actionUrl = isSafeUrl(item.actionUrl || item.action_url) ? sanitizeText(item.actionUrl || item.action_url, 500) : "";
+  return {
+    id: sanitizeText(item.id || `notice-${title}-${rawDate}`, 120),
+    date: rawDate.slice(0, 10),
+    title,
+    text,
+    category: ["notice", "update", "maintenance", "activity", "other"].includes(item.category) ? item.category : "notice",
+    actionLabel: sanitizeText(item.actionLabel || item.action_label || "打开", 40),
+    actionUrl,
+    pinned: Boolean(item.pinned),
+  };
+}
+
 function normalizeFriend(friend) {
   if (!isObject(friend)) return null;
   return {
@@ -607,6 +636,7 @@ function normalizeState(input = {}) {
   merged.versionCheckedAt = sanitizeText(source.versionCheckedAt, 40);
   merged.versionUpdate = normalizeVersionUpdate(source.versionUpdate);
   merged.notificationReadIds = asArray(source.notificationReadIds).map((id) => sanitizeText(id, 80)).filter(Boolean);
+  merged.remoteNotices = asArray(source.remoteNotices).map(normalizeAppNotice).filter(Boolean);
   merged.trainingTimer = normalizeTrainingTimer(source.trainingTimer);
   merged.authMode = source.authMode === "signup" ? "signup" : "login";
   merged.records = asArray(source.records).map(normalizeRecord).filter(Boolean).sort(sortByDateDesc);
@@ -2065,6 +2095,10 @@ function buildVersionManifestUrls() {
   return [...new Set(urls)];
 }
 
+function officialDownloadPageUrl() {
+  return readRuntimeEnv("VITE_DOWNLOAD_PAGE_URL") || DEFAULT_DOWNLOAD_PAGE_URL;
+}
+
 function resolveVersionUrl(value, manifestUrl) {
   const text = String(value || "").trim();
   if (!text) return "";
@@ -2134,7 +2168,7 @@ async function checkAppVersion({ interactive = true } = {}) {
       latestVersionCode: manifest.latestVersionCode,
       releaseDate: manifest.releaseDate,
       releaseNotes: manifest.releaseNotes,
-      downloadUrl: manifest.downloadUrl,
+      downloadUrl: manifest.downloadUrl || officialDownloadPageUrl(),
     });
     state.versionStatus = `已有新版本 v${manifest.latestVersion}（${manifest.latestVersionCode || "未提供版本码"}）：${notes}`;
     if (interactive) toast(manifest.downloadUrl ? "已有新版本，可前往下载" : "已有新版本，下载地址暂未配置");
@@ -2143,6 +2177,34 @@ async function checkAppVersion({ interactive = true } = {}) {
   save();
   render();
   return { hasUpdate, manifest, source };
+}
+
+function appNoticeTargets() {
+  const isAndroidApp = Boolean(globalThis.Capacitor?.isNativePlatform?.());
+  return ["all", isAndroidApp ? "android" : "web"];
+}
+
+async function loadCloudAppNotices({ markRead = false, renderAfter = true } = {}) {
+  try {
+    const client = await getSupabaseClient();
+    if (!client) return false;
+    const result = await client
+      .from("app_notices")
+      .select("id, title, body, category, target, action_label, action_url, pinned, published_at, expires_at")
+      .eq("published", true)
+      .in("target", appNoticeTargets())
+      .order("pinned", { ascending: false })
+      .order("published_at", { ascending: false })
+      .limit(50);
+    if (result.error) throw result.error;
+    state.remoteNotices = asArray(result.data).map(normalizeAppNotice).filter(Boolean);
+    if (markRead) markVisibleNoticesRead();
+    save();
+    if (renderAfter) render();
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 async function deletePostFromCloud(postId) {
@@ -2188,6 +2250,7 @@ async function syncCloudAfterLogin(client, user, { silent = false } = {}) {
     await loadAndMergeCloudPosts(client, user);
     await loadCloudFriends(client, user);
     await loadCloudVisiblePosts(client, user);
+    await loadCloudAppNotices({ renderAfter: false });
     await syncPendingFeedbackReports(client, user);
     markCloudSync();
     render();
@@ -2311,9 +2374,18 @@ function visibleAppNotices() {
     date: update.releaseDate || today(),
     title: `已有新版本 v${update.latestVersion}`,
     text: update.releaseNotes[0] || "点击前往下载页，安装最新版 APK。",
-    actionUrl: update.downloadUrl,
+    actionLabel: "前往官方下载页",
+    actionUrl: update.downloadUrl || officialDownloadPageUrl(),
   } : null;
-  return updateNotice ? [updateNotice, ...appNotices] : appNotices;
+  const baseNotices = state.remoteNotices.length ? state.remoteNotices : appNotices;
+  return updateNotice ? [updateNotice, ...baseNotices] : baseNotices;
+}
+
+function markVisibleNoticesRead() {
+  state.notificationReadIds = [...new Set([
+    ...state.notificationReadIds,
+    ...visibleAppNotices().map((notice) => notice.id),
+  ])];
 }
 
 function unreadNoticeCount() {
@@ -3338,10 +3410,14 @@ function mePage() {
             <div>
               <strong>版本检测</strong>
               <small>当前版本 v${escapeHtml(APP_VERSION)}（${APP_VERSION_CODE}）${state.versionCheckedAt ? ` · ${escapeHtml(new Date(state.versionCheckedAt).toLocaleString())}` : ""}</small>
+              <small class="version-download-url">官方下载页：${escapeHtml(officialDownloadPageUrl())}</small>
             </div>
-            ${state.versionUpdate.available && state.versionUpdate.downloadUrl
-              ? `<button class="btn primary" type="button" data-open-version-update>下载新版</button>`
-              : `<button class="btn ghost" type="button" data-check-version>${state.versionChecking ? "检查中..." : "检查更新"}</button>`}
+            <div class="version-actions">
+              ${state.versionUpdate.available && state.versionUpdate.downloadUrl
+                ? `<button class="btn primary" type="button" data-open-version-update>下载新版</button>`
+                : `<button class="btn ghost" type="button" data-check-version>${state.versionChecking ? "检查中..." : "检查更新"}</button>`}
+              <button class="btn ghost" type="button" data-open-official-download>官方下载页</button>
+            </div>
           </div>
           ${state.versionStatus ? `<p class="muted">${escapeHtml(state.versionStatus)}</p>` : ""}
         </div>
@@ -3500,7 +3576,7 @@ function noticesModalContent() {
           <time>${escapeHtml(notice.date)}</time>
           <h3>${escapeHtml(notice.title)}</h3>
           <p>${escapeHtml(notice.text)}</p>
-          ${notice.actionUrl ? `<button class="btn primary" type="button" data-open-version-update>打开下载页</button>` : ""}
+          ${notice.actionUrl ? `<button class="btn primary" type="button" data-open-notice-url="${escapeAttr(notice.actionUrl)}">${escapeHtml(notice.actionLabel || "打开")}</button>` : ""}
         </article>
       `).join("") || `<p class="muted empty">暂无通知。</p>`}
     </div>
@@ -3578,10 +3654,15 @@ function versionModalContent() {
           <strong>v${escapeHtml(update.latestVersion)} <small>${update.latestVersionCode || "-"}</small></strong>
         </div>
       ` : ""}
+      <div class="version-card download-source">
+        <span>官方下载页</span>
+        <strong>${escapeHtml(officialDownloadPageUrl())}</strong>
+      </div>
       ${state.versionCheckedAt ? `<p class="muted">最近检查：${escapeHtml(new Date(state.versionCheckedAt).toLocaleString())}</p>` : ""}
       <p class="muted">${state.versionStatus || "点击检查更新后，会读取版本清单并提示是否有新版本。"}</p>
       <div class="modal-actions">
         ${update.available && update.downloadUrl ? `<button class="btn primary" type="button" data-open-version-update>打开下载页</button>` : ""}
+        <button class="btn ghost" type="button" data-open-official-download>打开官方下载页</button>
         <button class="btn primary" type="button" data-run-version-check ${state.versionChecking ? "disabled" : ""}>${state.versionChecking ? "检查中..." : "检查更新"}</button>
         <button class="btn ghost" type="button" data-close-utility-modal>关闭</button>
       </div>
@@ -3856,14 +3937,15 @@ function bindUtilityEvents() {
   document.querySelectorAll("[data-utility-modal]").forEach((btn) => btn.onclick = () => {
     state.activeUtilityModal = btn.dataset.utilityModal;
     if (state.activeUtilityModal === "calories") state.selectedFoodRefId = "";
-    if (state.activeUtilityModal === "notices") {
-      state.notificationReadIds = [...new Set([...state.notificationReadIds, ...visibleAppNotices().map((notice) => notice.id)])];
-    }
+    if (state.activeUtilityModal === "notices") markVisibleNoticesRead();
     document.querySelector(".app")?.classList.remove("menu-open");
     document.querySelector("[data-menu-open]")?.setAttribute("aria-expanded", "false");
     save();
     render();
-    if (state.activeUtilityModal === "notices") checkAppVersion({ interactive: false });
+    if (state.activeUtilityModal === "notices") {
+      checkAppVersion({ interactive: false });
+      loadCloudAppNotices({ markRead: true });
+    }
   });
   document.querySelectorAll("[data-close-utility-modal]").forEach((el) => el.onclick = (event) => {
     if (event.currentTarget !== event.target && event.currentTarget.classList.contains("modal-scrim")) return;
@@ -3876,7 +3958,7 @@ function bindUtilityEvents() {
     await submitFeedback(new FormData(feedbackForm));
   };
   document.querySelectorAll("[data-mark-notices-read]").forEach((btn) => btn.onclick = () => {
-    state.notificationReadIds = [...new Set([...state.notificationReadIds, ...visibleAppNotices().map((notice) => notice.id)])];
+    markVisibleNoticesRead();
     save();
     render();
     toast("通知已标记为已读");
@@ -3920,7 +4002,13 @@ function bindUtilityEvents() {
     checkAppVersion();
   });
   document.querySelectorAll("[data-open-version-update]").forEach((btn) => btn.onclick = () => {
-    if (!openExternalUrl(state.versionUpdate.downloadUrl)) toast("下载地址暂未配置");
+    if (!openExternalUrl(state.versionUpdate.downloadUrl || officialDownloadPageUrl())) toast("下载地址暂未配置");
+  });
+  document.querySelectorAll("[data-open-official-download]").forEach((btn) => btn.onclick = () => {
+    if (!openExternalUrl(officialDownloadPageUrl())) toast("官方下载地址暂未配置");
+  });
+  document.querySelectorAll("[data-open-notice-url]").forEach((btn) => btn.onclick = () => {
+    if (!openExternalUrl(btn.dataset.openNoticeUrl || "")) toast("通知链接无效");
   });
   document.querySelectorAll("[data-open-sponsor]").forEach((btn) => btn.onclick = () => {
     const url = btn.dataset.openSponsor || "";
@@ -4489,6 +4577,7 @@ let state = load();
 
 render();
 checkAppVersion({ interactive: false });
+loadCloudAppNotices({ renderAfter: true });
 
 async function initializeAuthSession() {
   const client = await getSupabaseClient();

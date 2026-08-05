@@ -13,10 +13,10 @@
 
 当前正式版本：
 
-- 版本号：`0.2.1`
-- Android `versionCode`：`2`
-- APK 大小：`38.48 MB`
-- APK SHA256：`FACE09800927D9F666EDD0C757813F1B8CF842580F927092AAC87ECEEC3528AD`
+- 版本号：`0.2.2`
+- Android `versionCode`：`3`
+- APK 大小：`38.49 MB`
+- APK SHA256：`6EE72BE8C9993F76579608B1560C67FE3095C6C086056A051DA4150E79D6605C`
 
 ## 主要功能
 
@@ -68,6 +68,7 @@ http://127.0.0.1:4173/
 VITE_SUPABASE_URL=https://your-project-ref.supabase.co
 VITE_SUPABASE_ANON_KEY=your-public-anon-key
 VITE_VERSION_MANIFEST_URL=https://hoggerel28.github.io/body-building_app/docs/version.json
+VITE_DOWNLOAD_PAGE_URL=https://hoggerel28.github.io/body-building_app/docs/
 ```
 
 注意事项：
@@ -83,7 +84,7 @@ VITE_VERSION_MANIFEST_URL=https://hoggerel28.github.io/body-building_app/docs/ve
 ```text
 supabase/migrations/001_schema.sql
 ...
-supabase/migrations/014_playlist_link_dedupe_guard.sql
+supabase/migrations/015_app_notices.sql
 ```
 
 迁移内容包含用户资料、好友关系、训练日志、动态可见性、头像、反馈、通知、赞助展示、歌单去重等基础结构和 RLS 策略。

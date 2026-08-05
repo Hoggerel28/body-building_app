@@ -22,7 +22,7 @@ VITE_VERSION_MANIFEST_URL=https://你的域名/version.json
 1. 把新 APK 复制到这个目录，并命名为 `lianleme-latest.apk`；也可以放入
    `downloads/` 并在 `apkUrl` 中填写对应路径。
 2. 修改 `version.json`：
-   - `latestVersion`：展示版本号，例如 `0.2.1`
+   - `latestVersion`：展示版本号，例如 `0.2.2`
    - `latestVersionCode`：Android 版本码，必须比旧版更大
    - `releaseDate`：发布日期
    - `releaseNotes`：更新说明

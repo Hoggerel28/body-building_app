@@ -1,18 +1,17 @@
 {
-  "latestVersion": "0.2.1",
-  "latestVersionCode": 2,
-  "title": "练了没 0.2.1 正式版",
+  "latestVersion": "0.2.2",
+  "latestVersionCode": 3,
+  "title": "练了没 0.2.2 正式版",
   "releaseDate": "2026-08-05",
   "releaseNotes": [
-    "热量参考改为纯文字分类浏览，支持查看 55 种食物和多种做法估算。",
-    "动作库扩展到每个部位至少 25 个动作，并移除自定义动作输入。",
-    "修复训练记录部位归类，避免动作被计入无关部位。",
-    "训练日记日期详情新增当天训练部位说明。",
-    "歌单支持重复检测和删除确认。"
+    "新增 Supabase 后台通知，管理员可在 app_notices 表发布 App 内公告。",
+    "版本检测和通知窗口新增固定官方下载页入口。",
+    "普通通知按钮支持打开每条通知自己的 action_url。",
+    "本地版本清单补充官方下载页兜底，断网或远程源不可用时仍能看到下载地址。"
   ],
   "downloadPageUrl": "./index.html",
   "apkUrl": "./lianleme-latest.apk",
-  "apkSize": "38.48 MB",
-  "sha256": "FACE09800927D9F666EDD0C757813F1B8CF842580F927092AAC87ECEEC3528AD",
+  "apkSize": "38.49 MB",
+  "sha256": "6EE72BE8C9993F76579608B1560C67FE3095C6C086056A051DA4150E79D6605C",
   "mandatory": false
 }

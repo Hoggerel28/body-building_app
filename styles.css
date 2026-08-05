@@ -1670,6 +1670,10 @@ textarea::placeholder {
   background: rgba(255, 255, 252, .58);
 }
 
+.version-strip > div:first-child {
+  min-width: 0;
+}
+
 .version-strip strong,
 .version-strip small {
   display: block;
@@ -1680,6 +1684,18 @@ textarea::placeholder {
   color: var(--muted);
   font-size: 12px;
   font-weight: 800;
+}
+
+.version-download-url {
+  overflow-wrap: anywhere;
+}
+
+.version-actions {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .backup-actions,
@@ -1919,6 +1935,18 @@ textarea::placeholder {
 .version-card.has-update {
   border-color: rgba(var(--accent-rgb), .38);
   background: rgba(var(--accent-rgb), .08);
+}
+
+.version-card.download-source {
+  display: grid;
+  justify-content: stretch;
+  gap: 6px;
+}
+
+.version-card.download-source strong {
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 .confirm-modal {
@@ -2332,6 +2360,16 @@ textarea::placeholder {
   }
   .playlist-actions {
     grid-template-columns: 1fr;
+  }
+  .version-strip {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .version-actions {
+    justify-content: stretch;
+  }
+  .version-actions .btn {
+    flex: 1 1 120px;
   }
   .status-tile {
     min-height: 76px;
