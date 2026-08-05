@@ -9,6 +9,7 @@
 - 下载页：https://hoggerel28.github.io/body-building_app/docs/
 - Android APK：https://hoggerel28.github.io/body-building_app/docs/lianleme-latest.apk
 - 版本清单：https://hoggerel28.github.io/body-building_app/docs/version.json
+- 网页测试入口：https://hoggerel28.github.io/body-building_app/
 - iOS：暂无 iOS 版本
 
 当前正式版本：
