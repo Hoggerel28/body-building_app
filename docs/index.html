@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>练了没 - 正式版下载</title>
+  <meta name="description" content="练了没正式版下载页，提供 Android 安装包和 iOS 版本状态。">
+  <style>
+    :root {
+      --bg: #efeee7;
+      --surface: rgba(255, 255, 252, .88);
+      --surface-2: #f7f7f2;
+      --line: rgba(23, 26, 26, .14);
+      --text: #171a1a;
+      --muted: #626b68;
+      --accent: #18bfae;
+      --accent-strong: #0d8e84;
+      --danger: #db6a50;
+      --shadow: 0 18px 44px rgba(37, 41, 39, .08);
+      font-family: Inter, "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        linear-gradient(rgba(23, 26, 26, .035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(23, 26, 26, .035) 1px, transparent 1px),
+        var(--bg);
+      background-size: 22px 22px;
+    }
+
+    main {
+      width: min(1080px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 34px 0;
+    }
+
+    .shell {
+      display: grid;
+      gap: 16px;
+    }
+
+    .hero,
+    .card,
+    .meta {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      min-height: 300px;
+      padding: clamp(22px, 5vw, 46px);
+      display: grid;
+      align-content: space-between;
+      gap: 30px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 950;
+    }
+
+    .mark {
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      object-fit: cover;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 64px;
+      line-height: .98;
+      letter-spacing: 0;
+    }
+
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    .tagline,
+    .platform-copy,
+    .load-status,
+    footer {
+      color: var(--muted);
+    }
+
+    .tagline {
+      margin-top: 10px;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .load-status {
+      min-height: 20px;
+      margin-top: 14px;
+      font-size: 12px;
+      font-weight: 750;
+      word-break: break-all;
+    }
+
+    .release {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .meta {
+      padding: 12px;
+      background: rgba(255, 255, 252, .68);
+    }
+
+    .meta span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .meta strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 18px;
+    }
+
+    .download-grid,
+    .info-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .download-grid {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+    }
+
+    .info-grid {
+      grid-template-columns: 1.05fr .95fr;
+    }
+
+    .card {
+      padding: 18px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .download-card {
+      align-content: start;
+      min-height: 250px;
+    }
+
+    .platform-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .platform-copy {
+      margin-top: 8px;
+      line-height: 1.7;
+      font-weight: 760;
+    }
+
+    .platform-tag {
+      padding: 6px 9px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--accent-strong);
+      background: rgba(24, 191, 174, .08);
+      font-size: 12px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .platform-tag.muted {
+      color: var(--muted);
+      background: rgba(23, 26, 26, .05);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .btn {
+      min-height: 44px;
+      padding: 0 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+      background: var(--surface-2);
+      text-decoration: none;
+      font-weight: 900;
+    }
+
+    .btn.primary {
+      color: #fff;
+      border-color: var(--accent);
+      background: var(--accent);
+    }
+
+    .btn[aria-disabled="true"] {
+      color: var(--muted);
+      background: rgba(23, 26, 26, .05);
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--muted);
+      line-height: 1.8;
+      font-weight: 750;
+    }
+
+    code {
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: rgba(23, 26, 26, .06);
+    }
+
+    footer {
+      font-size: 12px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    @media (max-width: 720px) {
+      main {
+        width: min(100% - 22px, 1080px);
+        padding: 16px 0;
+      }
+
+      .release,
+      .download-grid,
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        min-height: 0;
+      }
+
+      h1 {
+        font-size: 42px;
+      }
+
+      .platform-head {
+        align-items: flex-start;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="shell">
+      <section class="hero">
+        <div class="brand">
+          <img class="mark" src="./app-icon.png" alt="">
+          <div>
+            <strong>练了没</strong>
+            <div class="tagline">藏器于身，伺时而动</div>
+          </div>
+        </div>
+        <div>
+          <h1>正式版下载</h1>
+          <p class="tagline">Android 正式安装包已开放下载；iOS 版本暂未发布。</p>
+          <p id="load-status" class="load-status" role="status" aria-live="polite">正在读取版本信息。</p>
+        </div>
+      </section>
+
+      <section class="release">
+        <div class="meta"><span>版本</span><strong id="latest-version">读取中</strong></div>
+        <div class="meta"><span>VersionCode</span><strong id="latest-version-code">-</strong></div>
+        <div class="meta"><span>发布日期</span><strong id="release-date">-</strong></div>
+        <div class="meta"><span>安装包</span><strong id="apk-size">正式 APK</strong></div>
+      </section>
+
+      <div class="download-grid">
+        <section class="card download-card">
+          <div class="platform-head">
+            <div>
+              <h2>Android 正式版</h2>
+              <p class="platform-copy">适用于安卓手机下载安装。当前安装包已使用正式签名，后续版本可在同签名下覆盖升级。</p>
+            </div>
+            <span class="platform-tag">已发布</span>
+          </div>
+          <div class="actions">
+            <a id="apk-download" class="btn primary" href="./lianleme-latest.apk">下载 Android APK</a>
+            <a class="btn" href="./version.json">查看 version.json</a>
+          </div>
+          <ul>
+            <li>如手机曾安装调试版，建议确认数据已同步后卸载旧版，再安装正式版。</li>
+            <li>安装时仅从本页面下载 APK，不要安装来源不明的转发文件。</li>
+          </ul>
+        </section>
+
+        <section class="card download-card">
+          <div class="platform-head">
+            <div>
+              <h2>iOS</h2>
+              <p class="platform-copy">iOS 版本预留入口，后续开发完成后会在这里补充下载或 TestFlight 信息。</p>
+            </div>
+            <span class="platform-tag muted">待开发</span>
+          </div>
+          <div class="actions">
+            <a class="btn" aria-disabled="true">暂无iOS版本</a>
+          </div>
+          <ul>
+            <li>当前 iPhone 用户暂无可安装版本。</li>
+            <li>此入口仅作为后续 iOS 发布预留。</li>
+          </ul>
+        </section>
+      </div>
+
+      <div class="info-grid">
+        <section class="card">
+          <h2>更新内容</h2>
+          <ul id="release-notes">
+            <li>正在读取更新说明。</li>
+          </ul>
+        </section>
+        <section class="card">
+          <h2>安装提示</h2>
+          <ul>
+            <li>下载后在手机文件管理器中打开 APK。</li>
+            <li>如系统拦截，请仅为可信浏览器临时允许安装未知来源应用。</li>
+            <li>旧版数据已同步到账号时，登录后可继续使用。</li>
+          </ul>
+        </section>
+      </div>
+
+      <footer>练了没正式版分发页。请不要在页面或仓库中放置私钥、token 或 Supabase service_role。</footer>
+    </div>
+  </main>
+  <script>
+    function resolveHttpUrl(value) {
+      if (!value) return "";
+      try {
+        const url = new URL(value, window.location.href);
+        return ["http:", "https:"].includes(url.protocol) ? url.href : "";
+      } catch {
+        return "";
+      }
+    }
+
+    function renderVersion(manifest) {
+      const latestVersion = String(manifest.latestVersion || manifest.version || "").trim();
+      const latestVersionCode = Math.max(0, Math.trunc(Number(manifest.latestVersionCode) || 0));
+      const notes = Array.isArray(manifest.releaseNotes)
+        ? manifest.releaseNotes
+        : (Array.isArray(manifest.notes) ? manifest.notes : []);
+      const apkUrl = resolveHttpUrl(manifest.apkUrl || manifest.downloadUrl);
+      const apkSize = String(manifest.apkSize || "").trim();
+      const checksum = String(manifest.sha256 || manifest.apkSha256 || "").trim();
+
+      document.getElementById("latest-version").textContent = latestVersion || "待发布";
+      document.getElementById("latest-version-code").textContent = latestVersionCode || "-";
+      document.getElementById("release-date").textContent = String(manifest.releaseDate || "-");
+      document.getElementById("apk-size").textContent = apkSize || "正式 APK";
+      if (latestVersion) document.title = `练了没 ${latestVersion} - 正式版下载`;
+
+      const notesElement = document.getElementById("release-notes");
+      notesElement.replaceChildren();
+      const visibleNotes = notes.map((note) => String(note || "").trim()).filter(Boolean);
+      (visibleNotes.length ? visibleNotes : ["暂无更新说明。"]).forEach((note) => {
+        const item = document.createElement("li");
+        item.textContent = note;
+        notesElement.appendChild(item);
+      });
+
+      const download = document.getElementById("apk-download");
+      const status = document.getElementById("load-status");
+      if (apkUrl) {
+        download.href = apkUrl;
+        download.rel = "noopener";
+        status.textContent = checksum ? `SHA-256：${checksum}` : "下载后请核对版本信息，再按系统提示安装。";
+      } else {
+        download.removeAttribute("href");
+        download.setAttribute("aria-disabled", "true");
+        download.textContent = "安装包待上传";
+        status.textContent = "version.json 尚未配置 APK 下载地址。";
+      }
+    }
+
+    fetch("./version.json", { cache: "no-store" })
+      .then((response) => {
+        if (!response.ok) throw new Error(`version.json ${response.status}`);
+        return response.json();
+      })
+      .then(renderVersion)
+      .catch(() => {
+        document.getElementById("latest-version").textContent = "读取失败";
+        document.getElementById("apk-download").removeAttribute("href");
+        document.getElementById("load-status").textContent = "版本信息暂时无法读取，请稍后刷新。";
+      });
+  </script>
+</body>
+</html>

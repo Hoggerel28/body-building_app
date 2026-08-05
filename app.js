@@ -1,4 +1,10 @@
 import { getSupabaseClient, getSupabaseStatus } from "./src/lib/supabase.js";
+import {
+  foodCalorieReferenceMeta,
+  foodReferenceSources,
+  foodReferences,
+} from "./src/data/food-calorie-reference.js";
+import { actionsByPart, bodyParts, partGuides } from "./src/data/exercise-library.js";
 
 const muscleMapAssets = {
   male: {
@@ -48,45 +54,6 @@ const muscleMapAssets = {
 const KEY = "fittrack.local.v2";
 const LEGACY_KEY = "fittrack.local.v1";
 
-const bodyParts = ["胸部", "背部", "腿部", "肩部", "手臂", "核心", "有氧"];
-const actionsByPart = {
-  胸部: [
-    "杠铃卧推", "哑铃卧推", "上斜杠铃卧推", "上斜哑铃卧推", "下斜卧推",
-    "器械推胸", "史密斯卧推", "双杠臂屈伸", "俯卧撑", "窄距俯卧撑",
-    "绳索夹胸", "哑铃飞鸟", "蝴蝶机夹胸", "上斜飞鸟", "下斜飞鸟"
-  ],
-  背部: [
-    "引体向上", "高位下拉", "反握高位下拉", "窄握下拉", "坐姿划船",
-    "杠铃划船", "哑铃单臂划船", "T 杠划船", "器械划船", "绳索直臂下压",
-    "硬拉", "罗马尼亚硬拉", "山羊挺身", "面拉", "反向飞鸟"
-  ],
-  腿部: [
-    "深蹲", "前蹲", "史密斯深蹲", "腿举", "哈克深蹲",
-    "箭步蹲", "保加利亚分腿蹲", "臀桥", "髋推", "罗马尼亚硬拉",
-    "腿屈伸", "腿弯举", "坐姿提踵", "站姿提踵", "内收外展机"
-  ],
-  肩部: [
-    "杠铃推举", "哑铃推举", "阿诺德推举", "史密斯推举", "器械推肩",
-    "哑铃侧平举", "绳索侧平举", "前平举", "俯身侧平举", "反向飞鸟",
-    "面拉", "杠铃耸肩", "哑铃耸肩", "直立划船", "Y 字上举"
-  ],
-  手臂: [
-    "杠铃弯举", "哑铃弯举", "锤式弯举", "牧师凳弯举", "绳索弯举",
-    "集中弯举", "反握弯举", "绳索下压", "直杆下压", "过顶臂屈伸",
-    "窄距卧推", "双杠臂屈伸", "仰卧臂屈伸", "哑铃颈后臂屈伸", "绳索单臂下压"
-  ],
-  核心: [
-    "卷腹", "仰卧起坐", "平板支撑", "侧平板支撑", "俄罗斯转体",
-    "悬垂举腿", "仰卧举腿", "登山跑", "死虫", "鸟狗",
-    "绳索卷腹", "健腹轮", "反向卷腹", "触脚卷腹", "负重卷腹"
-  ],
-  有氧: [
-    "跑步机慢跑", "跑步机快走", "户外跑", "椭圆机", "动感单车",
-    "划船机", "跳绳", "爬楼机", "HIIT 间歇", "波比跳",
-    "开合跳", "战绳", "游泳", "骑行", "快走"
-  ],
-};
-
 const daysOfWeek = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
 const visibilityOptions = ["private", "friends", "public"];
 const visibilityText = { private: "仅自己", friends: "好友可见", public: "公开" };
@@ -94,14 +61,18 @@ const musicPlatforms = ["网易云音乐", "QQ 音乐", "酷我音乐", "酷狗�
 const bodyPartSet = new Set(bodyParts);
 const goals = ["减脂", "增肌"];
 const pageNames = ["home", "data", "plan", "feed", "friends", "music", "me"];
-const APP_VERSION = "0.2.0";
-const LOCAL_VERSION_MANIFEST_URL = new URL("./assets/version-manifest.json", import.meta.url).href;
+const APP_VERSION = "0.2.1";
+const APP_VERSION_CODE = 2;
+const LOCAL_VERSION_MANIFEST_URL = new URL("./version.json", window.location.href).href;
 const VERSION_MANIFEST_URLS = buildVersionManifestUrls();
 const BUILT_IN_VERSION_MANIFEST = {
-  version: APP_VERSION,
-  title: "练了没 0.2.0 测试版",
-  notes: ["当前安装包已内置本版本信息。"],
-  downloadUrl: "",
+  latestVersion: APP_VERSION,
+  latestVersionCode: APP_VERSION_CODE,
+  title: "练了没 0.2.1 测试版",
+  releaseNotes: ["当前安装包已内置本版本信息。"],
+  releaseDate: "2026-07-27",
+  downloadPageUrl: "",
+  apkUrl: "",
   mandatory: false,
 };
 const sponsorConfig = {
@@ -116,7 +87,7 @@ const appNotices = [
   {
     id: "notice-0-2-0",
     date: "2026-07-27",
-    title: "0.2.0 测试版",
+    title: "0.2.1 测试版",
     text: "邮箱账号、好友、训练复盘可见性、头像同步、歌单外部打开和移动端抽屉已进入测试。",
   },
   {
@@ -187,12 +158,24 @@ const seed = {
   friendPostFriendId: "all",
   friendPostDate: "",
   friendPostRange: "all",
+  foodRefCategory: "全部",
+  foodRefQuery: "",
+  selectedFoodRefId: "",
   activeUtilityModal: "",
   timerConfirmAction: "",
+  playlistDeleteId: "",
   feedbackSubmitting: false,
   versionChecking: false,
   versionStatus: "",
   versionCheckedAt: "",
+  versionUpdate: {
+    available: false,
+    latestVersion: "",
+    latestVersionCode: 0,
+    releaseDate: "",
+    releaseNotes: [],
+    downloadUrl: "",
+  },
   notificationReadIds: [],
   trainingTimer: { date: today(), elapsedSeconds: 0, startedAt: "", running: false, savedSeconds: 0, savedAt: "" },
   authMode: "login",
@@ -288,6 +271,45 @@ function isSafeUrl(url) {
   }
 }
 
+function normalizedPlaylistUrl(url) {
+  try {
+    const parsed = new URL(sanitizeText(url, 500));
+    if (!["http:", "https:"].includes(parsed.protocol)) return "";
+    const host = parsed.hostname.toLowerCase().replace(/^www\./, "");
+    const path = parsed.pathname.replace(/\/+$/, "");
+    const hashQuery = parsed.hash.includes("?") ? parsed.hash.slice(parsed.hash.indexOf("?") + 1) : "";
+    const allParams = new URLSearchParams(`${parsed.searchParams.toString()}&${hashQuery}`);
+    const playlistId = allParams.get("id") || allParams.get("playlistId") || allParams.get("disstid") || allParams.get("pid");
+    if (host.includes("music.163.com") && playlistId) return `netease:playlist:${playlistId}`;
+    if ((host.includes("qq.com") || host.includes("y.qq.com")) && playlistId) return `qqmusic:playlist:${playlistId}`;
+    if (host.includes("kuwo.cn") && playlistId) return `kuwo:playlist:${playlistId}`;
+    if (host.includes("kugou.com") && playlistId) return `kugou:playlist:${playlistId}`;
+    if (host.includes("music.douyin.com") && playlistId) return `qishui:playlist:${playlistId}`;
+
+    const ignored = new Set(["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "uct2", "share", "userid"]);
+    [...parsed.searchParams.keys()].forEach((key) => {
+      if (key.startsWith("utm_") || ignored.has(key.toLowerCase())) parsed.searchParams.delete(key);
+    });
+    parsed.protocol = parsed.protocol.toLowerCase();
+    parsed.hostname = host;
+    parsed.pathname = path || "/";
+    parsed.hash = "";
+    parsed.searchParams.sort();
+    return parsed.href;
+  } catch {
+    return "";
+  }
+}
+
+function dedupePlaylists(playlists) {
+  const unique = new Map();
+  for (const playlist of playlists) {
+    const key = normalizedPlaylistUrl(playlist?.url);
+    if (key && !unique.has(key)) unique.set(key, playlist);
+  }
+  return Array.from(unique.values());
+}
+
 function isSafeAvatarUrl(url) {
   const text = String(url || "");
   if (isSafeUrl(text)) return true;
@@ -296,14 +318,22 @@ function isSafeAvatarUrl(url) {
 
 function normalizeRecord(record) {
   if (!isObject(record)) return null;
-  const part = bodyPartSet.has(record.part) ? record.part : normalizeParts(record.parts, seed.selectedPart)[0];
-  const parts = normalizeParts(record.parts, part);
+  const originalPart = bodyPartSet.has(record.part) ? record.part : normalizeParts(record.parts, seed.selectedPart)[0];
+  const partActions = asArray(actionsByPart[originalPart]);
+  const requestedAction = sanitizeText(record.action, 50);
+  const action = partActions.includes(requestedAction) ? requestedAction : (partActions[0] || "");
+  const matchingParts = bodyParts.filter((part) => asArray(actionsByPart[part]).includes(action));
+  const part = matchingParts.includes(originalPart) ? originalPart : (matchingParts[0] || originalPart);
+  const candidateParts = normalizeParts([part, ...asArray(record.parts)], part);
+  const parts = matchingParts.length
+    ? candidateParts.filter((item) => matchingParts.includes(item))
+    : candidateParts;
   return {
     id: normalizeId(record.id),
     date: normalizeDate(record.date),
     part,
-    parts,
-    action: sanitizeText(record.action || actionsByPart[part]?.[0] || "", 50),
+    parts: parts.length ? parts : [part],
+    action,
     weight: clampNumber(record.weight, 0, 2000),
     reps: Math.round(clampNumber(record.reps, 0, 10000)),
     sets: Math.round(clampNumber(record.sets, 0, 500)),
@@ -383,7 +413,7 @@ function normalizePost(post) {
 function normalizePlaylist(item) {
   if (!isObject(item)) return null;
   const url = sanitizeText(item.url, 500);
-  if (!isSafeUrl(url)) return null;
+  if (!isSafeUrl(url) || !normalizedPlaylistUrl(url)) return null;
   return {
     id: normalizeId(item.id),
     platform: musicPlatforms.includes(item.platform) ? item.platform : "其他",
@@ -517,6 +547,29 @@ function removeLegacyDemoData(data) {
   data.posts = data.posts.filter((post) => !(post.title === "腿部训练完成" && post.text.includes("今天深蹲重量还可以")));
 }
 
+function normalizeVersionUpdate(update = {}) {
+  const source = isObject(update) ? update : {};
+  const latestVersion = sanitizeText(source.latestVersion, 40);
+  const latestVersionCode = Math.max(0, Math.trunc(Number(source.latestVersionCode) || 0));
+  const releaseNotes = asArray(source.releaseNotes)
+    .map((note) => sanitizeText(note, 160))
+    .filter(Boolean)
+    .slice(0, 8);
+  const downloadUrl = isSafeUrl(source.downloadUrl) ? source.downloadUrl : "";
+  const available = Boolean(source.available) && (
+    latestVersionCode > APP_VERSION_CODE ||
+    (!latestVersionCode && compareSemver(latestVersion, APP_VERSION) > 0)
+  );
+  return {
+    available,
+    latestVersion,
+    latestVersionCode,
+    releaseDate: sanitizeText(source.releaseDate, 24),
+    releaseNotes,
+    downloadUrl,
+  };
+}
+
 function normalizeState(input = {}) {
   const source = isObject(input) ? input : {};
   const merged = { ...seed, ...source };
@@ -542,12 +595,17 @@ function normalizeState(input = {}) {
   merged.friendPostFriendId = sanitizeText(source.friendPostFriendId || "all", 120) || "all";
   merged.friendPostDate = source.friendPostDate && isDateKey(source.friendPostDate) ? source.friendPostDate : "";
   merged.friendPostRange = ["all", "today", "7", "30"].includes(source.friendPostRange) ? source.friendPostRange : "all";
-  merged.activeUtilityModal = ["feedback", "notices", "sponsor", "version"].includes(source.activeUtilityModal) ? source.activeUtilityModal : "";
+  merged.foodRefCategory = ["全部", ...foodReferenceCategories()].includes(source.foodRefCategory) ? source.foodRefCategory : "全部";
+  merged.foodRefQuery = sanitizeText(source.foodRefQuery, 40);
+  merged.selectedFoodRefId = sanitizeText(source.selectedFoodRefId, 120);
+  merged.activeUtilityModal = ["feedback", "notices", "sponsor", "version", "calories"].includes(source.activeUtilityModal) ? source.activeUtilityModal : "";
   merged.timerConfirmAction = ["finish", "reset"].includes(source.timerConfirmAction) ? source.timerConfirmAction : "";
+  merged.playlistDeleteId = sanitizeText(source.playlistDeleteId, 120);
   merged.feedbackSubmitting = false;
   merged.versionChecking = false;
   merged.versionStatus = sanitizeText(source.versionStatus, 240);
   merged.versionCheckedAt = sanitizeText(source.versionCheckedAt, 40);
+  merged.versionUpdate = normalizeVersionUpdate(source.versionUpdate);
   merged.notificationReadIds = asArray(source.notificationReadIds).map((id) => sanitizeText(id, 80)).filter(Boolean);
   merged.trainingTimer = normalizeTrainingTimer(source.trainingTimer);
   merged.authMode = source.authMode === "signup" ? "signup" : "login";
@@ -557,7 +615,9 @@ function normalizeState(input = {}) {
   merged.bodyLogs = asArray(source.bodyLogs).map(normalizeBodyLog).filter(Boolean).sort(sortByDateDesc);
   merged.posts = asArray(source.posts).map(normalizePost).filter((item) => item && (item.title || item.text)).sort(sortByDateDesc);
   merged.friendPosts = asArray(source.friendPosts).map(normalizePost).filter((item) => item && (item.title || item.text)).sort(sortByDateDesc);
-  merged.playlists = asArray(source.playlists).map(normalizePlaylist).filter(Boolean).sort(sortByDateDesc);
+  merged.playlists = dedupePlaylists(asArray(source.playlists).map(normalizePlaylist).filter(Boolean).sort(sortByDateDesc));
+  if (!foodReferenceGroups().some((item) => item.id === merged.selectedFoodRefId)) merged.selectedFoodRefId = "";
+  if (!merged.playlists.some((item) => item.id === merged.playlistDeleteId)) merged.playlistDeleteId = "";
   merged.feedbackReports = asArray(source.feedbackReports).map(normalizeFeedbackReport).filter(Boolean).sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
   merged.friends = asArray(source.friends).map(normalizeFriend).filter((item) => item && item.name);
   merged.friendRequests = asArray(source.friendRequests).map(normalizeFriend).filter((item) => item && item.name);
@@ -832,7 +892,7 @@ function postSignature(post) {
 }
 
 function playlistSignature(playlist) {
-  return [playlist.platform, playlist.name, playlist.url].join("::");
+  return normalizedPlaylistUrl(playlist.url);
 }
 
 function workoutRowToRecord(row) {
@@ -1439,7 +1499,7 @@ async function loadAndMergeCloudPlaylists(client, user) {
     .order("created_at", { ascending: false });
   if (result.error) throw result.error;
 
-  const remotePlaylists = asArray(result.data).map(playlistRowToPlaylist).filter(Boolean);
+  const remotePlaylists = dedupePlaylists(asArray(result.data).map(playlistRowToPlaylist).filter(Boolean));
   const mergedById = new Map(remotePlaylists.map((playlist) => [playlist.id, playlist]));
   const remoteBySignature = new Map(remotePlaylists.map((playlist) => [playlistSignature(playlist), playlist]));
   for (const localPlaylist of state.playlists) {
@@ -1447,7 +1507,7 @@ async function loadAndMergeCloudPlaylists(client, user) {
     if (remoteMatch) mergedById.set(remoteMatch.id, { ...localPlaylist, id: remoteMatch.id });
     else mergedById.set(localPlaylist.id, localPlaylist);
   }
-  state.playlists = Array.from(mergedById.values()).map(normalizePlaylist).filter(Boolean).sort(sortByDateDesc);
+  state.playlists = dedupePlaylists(Array.from(mergedById.values()).map(normalizePlaylist).filter(Boolean).sort(sortByDateDesc));
   save();
   if (!state.playlists.length) return;
 
@@ -1992,57 +2052,97 @@ function readRuntimeEnv(name) {
 }
 
 function buildVersionManifestUrls() {
-  const urls = readRuntimeEnv("VITE_VERSION_MANIFEST_URLS")
+  const urls = [
+    readRuntimeEnv("VITE_VERSION_MANIFEST_URL"),
+    readRuntimeEnv("VITE_VERSION_MANIFEST_URLS"),
+  ]
+    .filter(Boolean)
+    .join(",")
     .split(",")
     .map((url) => url.trim())
     .filter(isSafeUrl);
-  const supabaseUrl = getSupabaseStatus().url;
-  if (isSafeUrl(supabaseUrl)) {
-    urls.push(`${supabaseUrl.replace(/\/$/, "")}/storage/v1/object/public/app-updates/version-manifest.json`);
-  }
   urls.push(LOCAL_VERSION_MANIFEST_URL);
   return [...new Set(urls)];
 }
 
-async function checkAppVersion() {
+function resolveVersionUrl(value, manifestUrl) {
+  const text = String(value || "").trim();
+  if (!text) return "";
+  try {
+    const parsed = new URL(text, manifestUrl);
+    return ["http:", "https:"].includes(parsed.protocol) ? parsed.href : "";
+  } catch {
+    return "";
+  }
+}
+
+function normalizeVersionManifest(manifest, manifestUrl = "") {
+  const source = isObject(manifest) ? manifest : {};
+  const latestVersion = sanitizeText(source.latestVersion || source.version, 40) || APP_VERSION;
+  const latestVersionCode = Math.max(0, Math.trunc(Number(source.latestVersionCode) || 0));
+  const releaseNotes = asArray(source.releaseNotes?.length ? source.releaseNotes : source.notes)
+    .map((note) => sanitizeText(note, 160))
+    .filter(Boolean)
+    .slice(0, 8);
+  const downloadPageUrl = resolveVersionUrl(source.downloadPageUrl || source.downloadUrl, manifestUrl);
+  const apkUrl = resolveVersionUrl(source.apkUrl, manifestUrl);
+  return {
+    latestVersion,
+    latestVersionCode,
+    title: sanitizeText(source.title, 100),
+    releaseNotes,
+    releaseDate: sanitizeText(source.releaseDate, 24),
+    downloadUrl: downloadPageUrl || apkUrl,
+    mandatory: Boolean(source.mandatory),
+  };
+}
+
+async function checkAppVersion({ interactive = true } = {}) {
+  if (state.versionChecking) return;
   state.versionChecking = true;
   state.versionStatus = "正在检查更新...";
-  state.activeUtilityModal = state.activeUtilityModal || "version";
-  save();
+  if (interactive) state.activeUtilityModal = state.activeUtilityModal || "version";
   render();
-  let manifest = BUILT_IN_VERSION_MANIFEST;
+  let manifest = normalizeVersionManifest(BUILT_IN_VERSION_MANIFEST);
   let source = "built-in";
   for (const url of VERSION_MANIFEST_URLS) {
     try {
       const response = await fetch(url, { cache: "no-store" });
       if (!response.ok) throw new Error(`manifest ${response.status}`);
-      manifest = await response.json();
+      manifest = normalizeVersionManifest(await response.json(), url);
       source = url === LOCAL_VERSION_MANIFEST_URL ? "local" : "remote";
       break;
     } catch {
       source = "built-in";
     }
   }
-  const latestVersion = sanitizeText(manifest.version, 40) || APP_VERSION;
-  const hasUpdate = compareSemver(latestVersion, APP_VERSION) > 0;
+  const hasUpdate = manifest.latestVersionCode > 0
+    ? manifest.latestVersionCode > APP_VERSION_CODE
+    : compareSemver(manifest.latestVersion, APP_VERSION) > 0;
   state.versionCheckedAt = new Date().toISOString();
   if (!hasUpdate) {
+    state.versionUpdate = normalizeVersionUpdate();
     state.versionStatus = source === "remote"
-      ? `当前已是最新版本 v${APP_VERSION}`
-      : `当前已是本机最新版本 v${APP_VERSION}；配置国内版本源后可检查线上新版本`;
-    toast("当前已是最新版本");
+      ? `当前已是最新版本 v${APP_VERSION}（${APP_VERSION_CODE}）`
+      : `当前已是本机最新版本 v${APP_VERSION}（${APP_VERSION_CODE}）；配置线上 version.json 后可检查新版本`;
+    if (interactive) toast("当前已是最新版本");
   } else {
-    const notes = sanitizeText(asArray(manifest.notes).join("；") || manifest.title || "发现新版本", 220);
-    state.versionStatus = `发现新版本 v${latestVersion}：${notes}`;
-    if (isSafeUrl(manifest.downloadUrl) && window.confirm(`发现新版本 v${latestVersion}，是否打开下载地址？`)) {
-      openExternalUrl(manifest.downloadUrl);
-    } else {
-      toast("发现新版本，下载地址暂未配置");
-    }
+    const notes = sanitizeText(manifest.releaseNotes.join("；") || manifest.title || "发现新版本", 220);
+    state.versionUpdate = normalizeVersionUpdate({
+      available: true,
+      latestVersion: manifest.latestVersion,
+      latestVersionCode: manifest.latestVersionCode,
+      releaseDate: manifest.releaseDate,
+      releaseNotes: manifest.releaseNotes,
+      downloadUrl: manifest.downloadUrl,
+    });
+    state.versionStatus = `已有新版本 v${manifest.latestVersion}（${manifest.latestVersionCode || "未提供版本码"}）：${notes}`;
+    if (interactive) toast(manifest.downloadUrl ? "已有新版本，可前往下载" : "已有新版本，下载地址暂未配置");
   }
   state.versionChecking = false;
   save();
   render();
+  return { hasUpdate, manifest, source };
 }
 
 async function deletePostFromCloud(postId) {
@@ -2051,6 +2151,17 @@ async function deletePostFromCloud(postId) {
   const user = await getCloudUser(client);
   if (!user || !isUuid(postId)) return false;
   const result = await client.from("review_posts").delete().eq("id", postId).eq("author_id", user.id);
+  if (result.error) throw result.error;
+  markCloudSync();
+  return true;
+}
+
+async function deletePlaylistFromCloud(playlistId) {
+  const client = await getSupabaseClient();
+  if (!client) return false;
+  const user = await getCloudUser(client);
+  if (!user || !isUuid(playlistId)) return false;
+  const result = await client.from("playlist_links").delete().eq("id", playlistId).eq("user_id", user.id);
   if (result.error) throw result.error;
   markCloudSync();
   return true;
@@ -2166,6 +2277,7 @@ function render() {
     </div>
     ${utilityModal()}
     ${timerConfirmModal()}
+    ${playlistDeleteConfirmModal()}
     <div class="toast" role="status" aria-live="polite"></div>
   `;
   bindEvents();
@@ -2192,13 +2304,139 @@ function drawerUtilityLink(type, text, detail = "") {
   `;
 }
 
+function visibleAppNotices() {
+  const update = state.versionUpdate;
+  const updateNotice = update.available ? {
+    id: `version-update-${update.latestVersionCode || update.latestVersion}`,
+    date: update.releaseDate || today(),
+    title: `已有新版本 v${update.latestVersion}`,
+    text: update.releaseNotes[0] || "点击前往下载页，安装最新版 APK。",
+    actionUrl: update.downloadUrl,
+  } : null;
+  return updateNotice ? [updateNotice, ...appNotices] : appNotices;
+}
+
 function unreadNoticeCount() {
   const read = new Set(state.notificationReadIds);
-  return appNotices.filter((notice) => !read.has(notice.id)).length;
+  return visibleAppNotices().filter((notice) => !read.has(notice.id)).length;
 }
 
 function sectionTitle(title, detail = "") {
   return `<div class="section-title"><h2>${escapeHtml(title)}</h2>${detail ? `<p>${escapeHtml(detail)}</p>` : ""}</div>`;
+}
+
+function foodReferenceGroups() {
+  const groups = new Map();
+  for (const item of asArray(foodReferences)) {
+    if (!isObject(item) || !sanitizeText(item.name, 80)) continue;
+    const category = sanitizeText(item.category || "其他", 40);
+    const name = sanitizeText(item.name, 80);
+    const foodKey = sanitizeText(item.foodId || item.id || name, 80);
+    const categoryKey = sanitizeText(item.categoryId || category, 60);
+    const id = `${categoryKey}::${foodKey}`;
+    const variants = [
+      ...asArray(item.variants),
+      ...asArray(item.methods),
+      ...asArray(item.preparations),
+      ...asArray(item.cookingMethods),
+    ];
+    const sourceVariants = variants.length ? variants : [item];
+    const group = groups.get(id) || {
+      id,
+      category,
+      name,
+      description: sanitizeText(item.description || item.introduction || item.summary || "", 240),
+      aliases: [],
+      variants: [],
+    };
+    group.aliases = [...new Set([...group.aliases, ...asArray(item.aliases).map((alias) => sanitizeText(alias, 40)).filter(Boolean)])];
+    if (!group.description) {
+      group.description = sanitizeText(item.description || item.introduction || item.summary || "", 240);
+    }
+    sourceVariants.forEach((variant, index) => {
+      if (!isObject(variant)) return;
+      const nutrition = isObject(variant.nutrition) ? variant.nutrition : variant;
+      group.variants.push({
+        id: sanitizeText(variant.id || `${id}-${group.variants.length}`, 140),
+        method: sanitizeText(variant.method || variant.cooking || variant.label || variant.name || `做法 ${index + 1}`, 80),
+        portion: sanitizeText(variant.portion || variant.serving || variant.amount || variant.weight || "参考份量", 80),
+        kcal: clampNumber(nutrition.kcal ?? nutrition.calories, 0, 20000),
+        protein: clampNumber(nutrition.protein, 0, 1000),
+        carbs: clampNumber(nutrition.carbs ?? nutrition.carbohydrate, 0, 1000),
+        fat: clampNumber(nutrition.fat, 0, 1000),
+        note: sanitizeText(variant.note || variant.description || "", 180),
+      });
+    });
+    groups.set(id, group);
+  }
+  return Array.from(groups.values());
+}
+
+function foodReferenceCategories() {
+  return [...new Set(foodReferenceGroups().map((item) => item.category).filter(Boolean))];
+}
+
+function filteredFoodReferences() {
+  const query = state.foodRefQuery.toLowerCase();
+  return foodReferenceGroups().filter((item) => {
+    const categoryMatch = state.foodRefCategory === "全部" || item.category === state.foodRefCategory;
+    const queryText = `${item.name} ${item.description} ${item.aliases.join(" ")} ${item.variants.map((variant) => `${variant.method} ${variant.portion} ${variant.note}`).join(" ")}`.toLowerCase();
+    return categoryMatch && (!query || queryText.includes(query));
+  });
+}
+
+function nutritionValue(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return "-";
+  return Number.isInteger(number) ? String(number) : number.toFixed(1);
+}
+
+function foodReferenceListItem(item) {
+  return `
+    <button class="food-ref-list-item" type="button" data-food-ref-id="${escapeAttr(item.id)}">
+      <span class="food-ref-list-copy">
+        <small>${escapeHtml(item.category)}</small>
+        <strong>${escapeHtml(item.name)}</strong>
+        ${item.description ? `<span>${escapeHtml(item.description)}</span>` : ""}
+      </span>
+      <b>${item.variants.length} 种做法</b>
+      <span class="food-ref-chevron" aria-hidden="true">›</span>
+    </button>
+  `;
+}
+
+function foodReferenceDetail(item) {
+  if (!item) return "";
+  const description = item.description || `${item.name}在不同做法和份量下，热量与三大营养素会有明显差异。`;
+  return `
+    <div class="food-ref-detail">
+      <button class="food-ref-back" type="button" data-close-food-ref-detail aria-label="返回食物列表">← <span>返回食物列表</span></button>
+      <article class="food-ref-card">
+        <header class="food-ref-detail-head">
+          <span>${escapeHtml(item.category)}</span>
+          <h3>${escapeHtml(item.name)}</h3>
+          <p>${escapeHtml(description)}</p>
+        </header>
+        <div class="food-method-list">
+          ${item.variants.map((variant) => `
+            <section class="food-method-row">
+              <div class="food-method-title">
+                <strong>${escapeHtml(variant.method)}</strong>
+                <span>${escapeHtml(variant.portion)}</span>
+              </div>
+              <div class="food-method-macros">
+                <b>${nutritionValue(variant.kcal)}<small>kcal</small></b>
+                <b>${nutritionValue(variant.protein)}<small>g 蛋白质</small></b>
+                <b>${nutritionValue(variant.carbs)}<small>g 碳水</small></b>
+                <b>${nutritionValue(variant.fat)}<small>g 脂肪</small></b>
+              </div>
+              ${variant.note ? `<p>${escapeHtml(variant.note)}</p>` : ""}
+            </section>
+          `).join("")}
+        </div>
+      </article>
+    </div>
+  `;
 }
 
 function homePage() {
@@ -2529,15 +2767,16 @@ function backMuscles(hot) {
 
 function recordForm() {
   const record = state.records.find((item) => item.id === state.editingId) || null;
-  const primaryPart = record ? getRecordParts(record)[0] : (state.selectedPart || state.selectedParts[0] || "胸部");
-  const draft = record || { id: "", date: today(), part: primaryPart, action: actionsByPart[primaryPart][0], weight: "", reps: "", sets: "", note: "" };
-  const actions = actionsByPart[draft.part] || [];
+  const primaryPart = record ? record.part : (state.selectedPart || state.selectedParts[0] || "胸部");
+  const actions = asArray(actionsByPart[primaryPart]);
+  const draft = record || { id: "", date: today(), part: primaryPart, action: actions[0] || "", weight: "", reps: "", sets: "", note: "" };
+  const selectedAction = actions.includes(draft.action) ? draft.action : (actions[0] || "");
   return `
     <form id="recordForm" class="form-grid">
       <input type="hidden" name="id" value="${escapeAttr(draft.id)}">
       <div class="field full"><label>日期</label><input name="date" type="date" value="${escapeAttr(draft.date)}" required></div>
       <div class="field"><label>主要部位</label><select name="part">${bodyParts.map((part) => `<option ${part === draft.part ? "selected" : ""}>${escapeHtml(part)}</option>`).join("")}</select></div>
-      <div class="field"><label>动作</label><select name="action">${actions.map((action) => `<option ${action === draft.action ? "selected" : ""}>${escapeHtml(action)}</option>`).join("")}</select></div>
+      <div class="field"><label>动作</label><select name="action" required>${actions.map((action) => `<option value="${escapeAttr(action)}" ${action === selectedAction ? "selected" : ""}>${escapeHtml(action)}</option>`).join("")}</select></div>
       <div class="field"><label>重量 kg</label><input name="weight" type="number" min="0" step="0.5" placeholder="60" value="${escapeAttr(draft.weight)}"></div>
       <div class="field"><label>次数</label><input name="reps" type="number" min="0" placeholder="12" value="${escapeAttr(draft.reps)}"></div>
       <div class="field"><label>组数</label><input name="sets" type="number" min="0" placeholder="4" value="${escapeAttr(draft.sets)}"></div>
@@ -2600,7 +2839,7 @@ function recordActions(record) {
 
 function dataPage() {
   const part = state.selectedChartPart;
-  const partRecords = state.records.filter((record) => getRecordParts(record).includes(part));
+  const partRecords = state.records.filter((record) => record.part === part);
   const actionOptions = ["全部", ...new Set(partRecords.map((record) => record.action).filter(Boolean))];
   const filtered = partRecords.filter((record) => state.selectedActionFilter === "全部" || record.action === state.selectedActionFilter);
   return `
@@ -2674,7 +2913,7 @@ function planPage() {
           <form id="planForm" class="form-grid">
             <div class="field"><label>星期</label><select name="day">${daysOfWeek.map((day) => `<option>${day}</option>`).join("")}</select></div>
             <div class="field"><label>计划名称</label><input name="title" placeholder="如：胸 + 三头" required></div>
-            <div class="field full"><label>动作安排</label><textarea name="detail" placeholder="从动作库选择或自己填写"></textarea></div>
+            <div class="field full"><label>训练安排备注</label><textarea name="detail" placeholder="记录训练顺序、组数或注意事项"></textarea></div>
             <button class="btn primary field full">添加计划</button>
           </form>
           <div class="list">${state.plans.map((plan) => `<div class="plan-item"><strong>${escapeHtml(plan.day)}</strong><h3>${escapeHtml(plan.title)}</h3><p class="muted">${escapeHtml(plan.detail)}</p><small>${escapeHtml(plan.goal || state.goal)}计划</small></div>`).join("") || `<p class="muted empty">还没有训练计划。</p>`}</div>
@@ -2684,6 +2923,10 @@ function planPage() {
           <div class="dashboard-strip small">
             ${statusTile("今日摄入", `${todayKcal}`, "kcal")}
             ${statusTile("蛋白质", `${protein}`, "g")}
+          </div>
+          <div class="panel-action-row">
+            <span>常见食物热量、蛋白质和三大营养素估算。</span>
+            <button class="btn ghost" type="button" data-open-calorie-reference>热量参考</button>
           </div>
           <form id="foodForm" class="form-grid">
             <div class="field"><label>食物</label><input name="name" placeholder="如：鸡胸肉饭" required></div>
@@ -2794,6 +3037,7 @@ function feedPage() {
             <h3>具体训练内容</h3>
             ${recordsTable(dayRecords)}
           </div>
+          ${trainingPartGuides(dayRecords)}
         </div>
       </div>
     </section>
@@ -2842,6 +3086,49 @@ function filteredDiaryPosts(date) {
     if (!mine && state.diaryFriendId !== "all" && post.authorId !== state.diaryFriendId) return false;
     return true;
   });
+}
+
+function trainingPartGuides(records) {
+  const parts = [...new Set(records.flatMap(getRecordParts))].filter((part) => bodyPartSet.has(part));
+  if (!parts.length) return "";
+  return `
+    <div class="detail-section training-part-guides">
+      <div class="part-guide-heading">
+        <h3>当天训练部位</h3>
+        <span>结合训练明细查看部位重点，复盘动作质量和恢复情况。</span>
+      </div>
+      <div class="part-guide-list">
+        ${parts.map((part) => trainingPartGuideCard(part)).join("")}
+      </div>
+    </div>
+  `;
+}
+
+function trainingPartGuideCard(part) {
+  const source = partGuides?.[part];
+  const guide = typeof source === "string" ? { description: source } : (isObject(source) ? source : {});
+  const description = sanitizeText(
+    guide.text || guide.description || guide.introduction || guide.summary || guide.overview || guide.focus || "",
+    360,
+  );
+  const tips = [
+    ...asArray(guide.reviewTips),
+    ...asArray(guide.tips),
+    ...asArray(guide.reviewPoints),
+    ...asArray(guide.checkpoints),
+    ...asArray(guide.cues),
+  ].map((tip) => sanitizeText(isObject(tip) ? (tip.text || tip.label || tip.title) : tip, 160)).filter(Boolean).slice(0, 4);
+  const fallback = fitnessKnowledge.find((item) => item.part === part)?.text || "复盘当天动作控制、目标部位发力、疼痛情况和下次调整点。";
+  return `
+    <article class="part-guide-card">
+      <div>
+        <span>${escapeHtml(part)}</span>
+        <h4>${escapeHtml(sanitizeText(guide.title || `${part}训练要点`, 80))}</h4>
+      </div>
+      <p>${escapeHtml(description || fallback)}</p>
+      ${tips.length ? `<ul>${tips.map((tip) => `<li>${escapeHtml(tip)}</li>`).join("")}</ul>` : ""}
+    </article>
+  `;
 }
 
 function postEditPanel(post) {
@@ -3010,7 +3297,16 @@ function musicPage() {
         </div>
         <div class="panel">
           ${sectionTitle("已保存歌单", "网页端会调用系统打开链接，安卓端后续接 Intent 打开本地 App。")}
-          <div class="list">${state.playlists.map((item) => `<div class="plan-item playlist"><strong>${escapeHtml(item.platform)}</strong><h3>${escapeHtml(item.name)}</h3><button class="btn ghost" type="button" data-open-playlist="${escapeAttr(item.id)}">用外部 App 打开</button></div>`).join("") || `<p class="muted empty">还没有保存歌单链接。</p>`}</div>
+          <div class="list">${state.playlists.map((item) => `
+            <div class="plan-item playlist">
+              <strong>${escapeHtml(item.platform)}</strong>
+              <h3>${escapeHtml(item.name)}</h3>
+              <div class="playlist-actions">
+                <button class="btn ghost" type="button" data-open-playlist="${escapeAttr(item.id)}">用外部 App 打开</button>
+                <button class="btn danger" type="button" data-request-playlist-delete="${escapeAttr(item.id)}">删除</button>
+              </div>
+            </div>
+          `).join("") || `<p class="muted empty">还没有保存歌单链接。</p>`}</div>
         </div>
       </div>
     </section>
@@ -3041,9 +3337,11 @@ function mePage() {
           <div class="version-strip">
             <div>
               <strong>版本检测</strong>
-              <small>当前版本 v${escapeHtml(APP_VERSION)}${state.versionCheckedAt ? ` · ${escapeHtml(new Date(state.versionCheckedAt).toLocaleString())}` : ""}</small>
+              <small>当前版本 v${escapeHtml(APP_VERSION)}（${APP_VERSION_CODE}）${state.versionCheckedAt ? ` · ${escapeHtml(new Date(state.versionCheckedAt).toLocaleString())}` : ""}</small>
             </div>
-            <button class="btn ghost" type="button" data-check-version>${state.versionChecking ? "检查中..." : "检查更新"}</button>
+            ${state.versionUpdate.available && state.versionUpdate.downloadUrl
+              ? `<button class="btn primary" type="button" data-open-version-update>下载新版</button>`
+              : `<button class="btn ghost" type="button" data-check-version>${state.versionChecking ? "检查中..." : "检查更新"}</button>`}
           </div>
           ${state.versionStatus ? `<p class="muted">${escapeHtml(state.versionStatus)}</p>` : ""}
         </div>
@@ -3087,16 +3385,17 @@ function mePage() {
 
 function utilityModal() {
   if (!state.activeUtilityModal) return "";
-  const titleMap = { feedback: "反馈", notices: "通知", sponsor: "支持赞助", version: "版本检测" };
+  const titleMap = { feedback: "反馈", notices: "通知", sponsor: "支持赞助", version: "版本检测", calories: "热量参考" };
   const contentMap = {
     feedback: feedbackModalContent(),
     notices: noticesModalContent(),
     sponsor: sponsorModalContent(),
     version: versionModalContent(),
+    calories: calorieReferenceModalContent(),
   };
   return `
     <div class="modal-scrim" data-close-utility-modal>
-      <section class="utility-modal" role="dialog" aria-modal="true" aria-label="${escapeAttr(titleMap[state.activeUtilityModal] || "窗口")}">
+      <section class="utility-modal ${state.activeUtilityModal === "calories" ? "calorie-reference-modal" : ""}" role="dialog" aria-modal="true" aria-label="${escapeAttr(titleMap[state.activeUtilityModal] || "窗口")}">
         <div class="modal-head">
           <strong>${escapeHtml(titleMap[state.activeUtilityModal] || "窗口")}</strong>
           <button type="button" class="drawer-close modal-close" data-close-utility-modal aria-label="关闭">×</button>
@@ -3127,6 +3426,32 @@ function timerConfirmModal() {
         <div class="modal-actions confirm-actions">
           <button class="btn ghost" type="button" data-close-timer-confirm>取消</button>
           <button class="btn ${isFinish ? "primary" : "danger"}" type="button" data-confirm-timer-action>${isFinish ? "结束锻炼" : "确认清零"}</button>
+        </div>
+      </section>
+    </div>
+  `;
+}
+
+function playlistDeleteConfirmModal() {
+  const playlist = state.playlists.find((item) => item.id === state.playlistDeleteId);
+  if (!playlist) return "";
+  return `
+    <div class="modal-scrim confirm-scrim" data-close-playlist-delete>
+      <section class="utility-modal confirm-modal" role="dialog" aria-modal="true" aria-label="确认删除歌单">
+        <div class="modal-head">
+          <strong>删除这个歌单？</strong>
+          <button type="button" class="drawer-close modal-close" data-close-playlist-delete aria-label="关闭">×</button>
+        </div>
+        <div class="modal-body confirm-body">
+          <p>将从已保存歌单中删除“${escapeHtml(playlist.name)}”。原音乐平台中的歌单不会受到影响。</p>
+          <div class="confirm-duration playlist-confirm-name">
+            <span>${escapeHtml(playlist.platform)}</span>
+            <strong>${escapeHtml(playlist.name)}</strong>
+          </div>
+        </div>
+        <div class="modal-actions confirm-actions">
+          <button class="btn ghost" type="button" data-close-playlist-delete>取消</button>
+          <button class="btn danger" type="button" data-confirm-playlist-delete>确认删除</button>
         </div>
       </section>
     </div>
@@ -3167,13 +3492,15 @@ function feedbackModalContent() {
 }
 
 function noticesModalContent() {
+  const notices = visibleAppNotices();
   return `
     <div class="modal-body notice-list">
-      ${appNotices.map((notice) => `
+      ${notices.map((notice) => `
         <article class="notice-item ${state.notificationReadIds.includes(notice.id) ? "" : "unread"}">
           <time>${escapeHtml(notice.date)}</time>
           <h3>${escapeHtml(notice.title)}</h3>
           <p>${escapeHtml(notice.text)}</p>
+          ${notice.actionUrl ? `<button class="btn primary" type="button" data-open-version-update>打开下载页</button>` : ""}
         </article>
       `).join("") || `<p class="muted empty">暂无通知。</p>`}
     </div>
@@ -3202,16 +3529,59 @@ function sponsorModalContent() {
   `;
 }
 
+function calorieReferenceModalContent() {
+  const categories = foodReferenceCategories();
+  const items = filteredFoodReferences();
+  const selectedItem = foodReferenceGroups().find((item) => item.id === state.selectedFoodRefId);
+  return `
+    <div class="modal-body calorie-panel">
+      ${selectedItem ? foodReferenceDetail(selectedItem) : `
+        <div class="calorie-tools">
+          <label class="field">
+            <span>搜索食物</span>
+            <input id="foodRefQuery" value="${escapeAttr(state.foodRefQuery)}" placeholder="鸡腿 / 米饭 / 蛋白">
+          </label>
+          <div class="calorie-cats">
+            <button class="chip ${state.foodRefCategory === "全部" ? "active" : ""}" type="button" data-food-ref-category="全部">全部</button>
+            ${categories.map((category) => `
+              <button class="chip ${category === state.foodRefCategory ? "active" : ""}" type="button" data-food-ref-category="${escapeAttr(category)}">${escapeHtml(category)}</button>
+            `).join("")}
+          </div>
+        </div>
+        <div class="food-ref-list">
+          ${items.map(foodReferenceListItem).join("") || `<p class="muted empty">没有找到匹配的食物。</p>`}
+        </div>
+      `}
+      <div class="calorie-reference-notes">
+        <p class="calorie-disclaimer">${escapeHtml(foodCalorieReferenceMeta.disclaimer)}</p>
+        <p class="muted source-line">换算方式：${escapeHtml(foodCalorieReferenceMeta.calculation)}</p>
+        <p class="muted source-line">参考：${foodReferenceSources.map((source) => `<a href="${escapeAttr(source.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(source.name)}</a>`).join(" / ")}</p>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn ghost" type="button" data-close-utility-modal>关闭</button>
+    </div>
+  `;
+}
+
 function versionModalContent() {
+  const update = state.versionUpdate;
   return `
     <div class="modal-body version-panel">
       <div class="version-card">
         <span>当前版本</span>
-        <strong>v${escapeHtml(APP_VERSION)}</strong>
+        <strong>v${escapeHtml(APP_VERSION)} <small>${APP_VERSION_CODE}</small></strong>
       </div>
+      ${update.available ? `
+        <div class="version-card has-update">
+          <span>最新版本</span>
+          <strong>v${escapeHtml(update.latestVersion)} <small>${update.latestVersionCode || "-"}</small></strong>
+        </div>
+      ` : ""}
       ${state.versionCheckedAt ? `<p class="muted">最近检查：${escapeHtml(new Date(state.versionCheckedAt).toLocaleString())}</p>` : ""}
       <p class="muted">${state.versionStatus || "点击检查更新后，会读取版本清单并提示是否有新版本。"}</p>
       <div class="modal-actions">
+        ${update.available && update.downloadUrl ? `<button class="btn primary" type="button" data-open-version-update>打开下载页</button>` : ""}
         <button class="btn primary" type="button" data-run-version-check ${state.versionChecking ? "disabled" : ""}>${state.versionChecking ? "检查中..." : "检查更新"}</button>
         <button class="btn ghost" type="button" data-close-utility-modal>关闭</button>
       </div>
@@ -3224,6 +3594,7 @@ function bindEvents() {
   bindUtilityEvents();
   bindTrainingTimerEvents();
   bindTimerConfirmEvents();
+  bindPlaylistDeleteEvents();
   document.querySelectorAll("[data-avatar-img]").forEach((img) => {
     const handleAvatarError = async () => {
       const recovered = await recoverLatestAvatarFromStorage();
@@ -3240,6 +3611,7 @@ function bindEvents() {
     state.activePage = btn.dataset.page;
     save();
     render();
+    if (state.activePage === "me") checkAppVersion({ interactive: false });
   });
   document.querySelectorAll("[data-goal]").forEach((btn) => btn.onclick = async () => {
     state.goal = btn.dataset.goal;
@@ -3318,6 +3690,7 @@ function bindEvents() {
 
 function closeUtilityModal() {
   state.activeUtilityModal = "";
+  state.selectedFoodRefId = "";
   state.feedbackSubmitting = false;
   save();
   render();
@@ -3443,16 +3816,54 @@ function bindTimerConfirmEvents() {
   });
 }
 
+function bindPlaylistDeleteEvents() {
+  document.querySelectorAll("[data-request-playlist-delete]").forEach((btn) => btn.onclick = () => {
+    if (!state.playlists.some((item) => item.id === btn.dataset.requestPlaylistDelete)) return;
+    state.playlistDeleteId = btn.dataset.requestPlaylistDelete;
+    save();
+    render();
+  });
+  document.querySelectorAll("[data-close-playlist-delete]").forEach((el) => el.onclick = (event) => {
+    if (event.currentTarget !== event.target && event.currentTarget.classList.contains("modal-scrim")) return;
+    state.playlistDeleteId = "";
+    save();
+    render();
+  });
+  document.querySelectorAll("[data-confirm-playlist-delete]").forEach((btn) => btn.onclick = async () => {
+    const playlist = state.playlists.find((item) => item.id === state.playlistDeleteId);
+    if (!playlist) return;
+    state.playlists = state.playlists.filter((item) => item.id !== playlist.id);
+    state.playlistDeleteId = "";
+    save();
+    render();
+    try {
+      const synced = await deletePlaylistFromCloud(playlist.id);
+      toast(synced ? "歌单已删除并同步" : "歌单已从本机删除");
+    } catch (error) {
+      markCloudSync({ error: error?.message || "歌单删除同步失败" });
+      toast("歌单已从本机删除，云端删除失败");
+    }
+  });
+}
+
 function bindUtilityEvents() {
+  document.querySelectorAll("[data-open-calorie-reference]").forEach((btn) => btn.onclick = () => {
+    state.activeUtilityModal = "calories";
+    state.selectedFoodRefId = "";
+    save();
+    render();
+  });
   document.querySelectorAll("[data-utility-modal]").forEach((btn) => btn.onclick = () => {
     state.activeUtilityModal = btn.dataset.utilityModal;
+    if (state.activeUtilityModal === "calories") state.selectedFoodRefId = "";
     if (state.activeUtilityModal === "notices") {
-      state.notificationReadIds = [...new Set([...state.notificationReadIds, ...appNotices.map((notice) => notice.id)])];
+      state.notificationReadIds = [...new Set([...state.notificationReadIds, ...visibleAppNotices().map((notice) => notice.id)])];
     }
     document.querySelector(".app")?.classList.remove("menu-open");
     document.querySelector("[data-menu-open]")?.setAttribute("aria-expanded", "false");
     save();
     render();
+    if (state.activeUtilityModal === "notices") checkAppVersion({ interactive: false });
   });
   document.querySelectorAll("[data-close-utility-modal]").forEach((el) => el.onclick = (event) => {
     if (event.currentTarget !== event.target && event.currentTarget.classList.contains("modal-scrim")) return;
@@ -3465,13 +3876,51 @@ function bindUtilityEvents() {
     await submitFeedback(new FormData(feedbackForm));
   };
   document.querySelectorAll("[data-mark-notices-read]").forEach((btn) => btn.onclick = () => {
-    state.notificationReadIds = [...new Set([...state.notificationReadIds, ...appNotices.map((notice) => notice.id)])];
+    state.notificationReadIds = [...new Set([...state.notificationReadIds, ...visibleAppNotices().map((notice) => notice.id)])];
     save();
     render();
     toast("通知已标记为已读");
   });
+  document.querySelectorAll("[data-food-ref-category]").forEach((btn) => btn.onclick = () => {
+    state.foodRefCategory = btn.dataset.foodRefCategory || "全部";
+    state.selectedFoodRefId = "";
+    save();
+    render();
+  });
+  document.querySelectorAll("[data-food-ref-id]").forEach((btn) => btn.onclick = () => {
+    state.selectedFoodRefId = btn.dataset.foodRefId || "";
+    save();
+    render();
+  });
+  document.querySelectorAll("[data-close-food-ref-detail]").forEach((btn) => btn.onclick = () => {
+    state.selectedFoodRefId = "";
+    save();
+    render();
+  });
+  const foodRefQuery = document.getElementById("foodRefQuery");
+  if (foodRefQuery) {
+    const syncFoodRefQuery = () => {
+      state.foodRefQuery = sanitizeText(foodRefQuery.value, 40);
+    };
+    foodRefQuery.oninput = syncFoodRefQuery;
+    foodRefQuery.onchange = () => {
+      syncFoodRefQuery();
+      save();
+      render();
+    };
+    foodRefQuery.onkeydown = (event) => {
+      if (event.key !== "Enter") return;
+      event.preventDefault();
+      syncFoodRefQuery();
+      save();
+      render();
+    };
+  }
   document.querySelectorAll("[data-check-version], [data-run-version-check]").forEach((btn) => btn.onclick = () => {
     checkAppVersion();
+  });
+  document.querySelectorAll("[data-open-version-update]").forEach((btn) => btn.onclick = () => {
+    if (!openExternalUrl(state.versionUpdate.downloadUrl)) toast("下载地址暂未配置");
   });
   document.querySelectorAll("[data-open-sponsor]").forEach((btn) => btn.onclick = () => {
     const url = btn.dataset.openSponsor || "";
@@ -3498,6 +3947,11 @@ function bindDrawerEvents() {
   closeTargets.forEach((target) => target.onclick = close);
   document.onkeydown = (event) => {
     if (event.key === "Escape" && state.timerConfirmAction) closeTimerConfirm();
+    else if (event.key === "Escape" && state.playlistDeleteId) {
+      state.playlistDeleteId = "";
+      save();
+      render();
+    }
     else if (event.key === "Escape" && state.activeUtilityModal) closeUtilityModal();
     else if (event.key === "Escape") close();
   };
@@ -3520,7 +3974,7 @@ function bindForms() {
   if (recordFormEl) {
     recordFormEl.elements.part.onchange = () => {
       state.selectedPart = recordFormEl.elements.part.value;
-      state.selectedParts = normalizeParts([state.selectedPart, ...state.selectedParts], state.selectedPart);
+      state.selectedParts = [state.selectedPart];
       save();
       render();
     };
@@ -3813,6 +4267,9 @@ function bindForms() {
     const form = new FormData(playlistForm);
     const item = normalizePlaylist({ id: cloudId(), date: today(), platform: form.get("platform"), name: form.get("name"), url: form.get("url") });
     if (!item) return toast("请输入有效的 http/https 歌单链接");
+    if (state.playlists.some((playlist) => playlistSignature(playlist) === playlistSignature(item))) {
+      return toast("这个歌单链接已经保存过了");
+    }
     state.playlists.unshift(item);
     save();
     render();
@@ -4031,6 +4488,7 @@ async function handleAuth(action, email, password) {
 let state = load();
 
 render();
+checkAppVersion({ interactive: false });
 
 async function initializeAuthSession() {
   const client = await getSupabaseClient();

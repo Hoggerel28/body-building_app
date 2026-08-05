@@ -38,13 +38,18 @@ VITE_SUPABASE_ANON_KEY=your-public-anon-key
 
 ## 版本检测
 
-支持多源版本清单。国内分发时建议把 `version-manifest.json` 和新版 APK 放到腾讯 COS、阿里 OSS、Gitee Pages 或自己的国内服务器，然后在 `.env` 配置：
+静态分发页位于 `release-site/`。部署后把固定的 `version.json` 地址配置到本地 `.env`：
 
 ```env
-VITE_VERSION_MANIFEST_URLS=https://your-domain/version-manifest.json
+VITE_VERSION_MANIFEST_URL=https://download.example.com/lianleme/version.json
 ```
 
-如果未配置远程源，应用会使用包内 `assets/version-manifest.json` 作为兜底。
+App 启动、进入通知页或“我的”页时会读取该清单，以 Android `versionCode` 对比
+`latestVersionCode`。旧版本只提示用户打开下载页，不会自动下载或安装。
+
+如果未配置远程源或网络不可用，应用会使用包内 `public/version.json` 作为兜底。
+旧的 `version`、`notes`、`downloadUrl` 字段和 `VITE_VERSION_MANIFEST_URLS` 仍兼容。
+发布和替换 APK 的步骤见 `release-site/README.md`。
 
 ## Android 打包
 

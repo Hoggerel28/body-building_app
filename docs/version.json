@@ -1,0 +1,18 @@
+{
+  "latestVersion": "0.2.1",
+  "latestVersionCode": 2,
+  "title": "练了没 0.2.1 正式版",
+  "releaseDate": "2026-08-05",
+  "releaseNotes": [
+    "热量参考改为纯文字分类浏览，支持查看 55 种食物和多种做法估算。",
+    "动作库扩展到每个部位至少 25 个动作，并移除自定义动作输入。",
+    "修复训练记录部位归类，避免动作被计入无关部位。",
+    "训练日记日期详情新增当天训练部位说明。",
+    "歌单支持重复检测和删除确认。"
+  ],
+  "downloadPageUrl": "./index.html",
+  "apkUrl": "./lianleme-latest.apk",
+  "apkSize": "38.48 MB",
+  "sha256": "0AD8F042B21F58352C53C854156076CF15DF3571FE26D67BC1918F287CF16284",
+  "mandatory": false
+}

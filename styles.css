@@ -358,9 +358,13 @@ a { color: inherit; }
 .today-timer {
   grid-template-columns: minmax(88px, 1fr) 112px;
   align-items: center;
-  padding-left: 12px;
-  border-left: 1px solid var(--line);
+  padding: 12px;
+  border: 1px solid rgba(var(--accent-rgb), .28);
+  border-radius: 8px;
   gap: 10px;
+  background: rgba(var(--accent-rgb), .1);
+  box-shadow: inset 3px 0 0 var(--accent);
+  transition: background-color .2s ease, border-color .2s ease;
 }
 
 .timer-readout {
@@ -1066,6 +1070,21 @@ textarea::placeholder {
   margin-top: 14px;
 }
 
+.panel-action-row {
+  margin: 12px 0;
+  padding: 10px;
+  border: 1px solid rgba(var(--accent-rgb), .2);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--muted);
+  background: rgba(var(--accent-rgb), .07);
+  font-size: 13px;
+  font-weight: 800;
+}
+
 .plan-item,
 .post,
 .result-item {
@@ -1124,6 +1143,259 @@ textarea::placeholder {
   grid-template-columns: auto 1fr auto;
   gap: 12px;
   align-items: center;
+}
+
+.calorie-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.utility-modal.calorie-reference-modal {
+  width: min(1040px, 100%);
+}
+
+.calorie-disclaimer {
+  margin: 0;
+  padding: 11px 12px;
+  border: 1px solid rgba(var(--accent-rgb), .28);
+  border-radius: 8px;
+  color: var(--text);
+  background: rgba(var(--accent-rgb), .08);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.6;
+}
+
+.calorie-tools {
+  display: grid;
+  gap: 10px;
+}
+
+.calorie-tools .field {
+  margin: 0;
+}
+
+.calorie-tools .field span {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.calorie-cats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.food-ref-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.food-ref-list-item {
+  min-width: 0;
+  min-height: 86px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto 18px;
+  gap: 10px;
+  align-items: center;
+  color: var(--text);
+  background: rgba(255, 255, 252, .7);
+  text-align: left;
+}
+
+.food-ref-list-item:hover {
+  border-color: rgba(var(--accent-rgb), .42);
+  background: rgba(var(--accent-rgb), .08);
+}
+
+.food-ref-list-copy {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.food-ref-list-copy small {
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.food-ref-list-copy strong {
+  font-size: 16px;
+}
+
+.food-ref-list-copy > span {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.food-ref-list-item > b {
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.food-ref-chevron {
+  color: var(--accent);
+  font-size: 24px;
+  line-height: 1;
+}
+
+.food-ref-detail {
+  display: grid;
+  gap: 10px;
+}
+
+.food-ref-back {
+  width: fit-content;
+  min-height: 40px;
+  padding: 0 8px;
+  border: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--accent-strong);
+  background: transparent;
+  font-weight: 900;
+}
+
+.food-ref-card {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 252, .78);
+}
+
+.food-ref-detail-head {
+  padding: 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.food-ref-detail-head span {
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.food-ref-detail-head h3 {
+  margin: 5px 0 6px;
+  font-size: 22px;
+}
+
+.food-ref-detail-head p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.food-method-list {
+  display: grid;
+}
+
+.food-method-row {
+  padding: 14px 16px;
+  display: grid;
+  grid-template-columns: minmax(140px, .7fr) minmax(360px, 1.8fr);
+  gap: 12px 18px;
+  align-items: center;
+}
+
+.food-method-row + .food-method-row {
+  border-top: 1px solid var(--line);
+}
+
+.food-method-title {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+}
+
+.food-method-title strong {
+  overflow-wrap: anywhere;
+}
+
+.food-method-title span,
+.food-method-row p {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.food-method-macros {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.food-method-macros b {
+  min-width: 0;
+  padding: 8px 5px;
+  border-left: 1px solid var(--line);
+  text-align: center;
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+.food-method-macros small {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.food-method-row p {
+  grid-column: 1 / -1;
+  margin: -2px 0 0;
+  line-height: 1.5;
+}
+
+.calorie-reference-notes {
+  display: grid;
+  gap: 8px;
+}
+
+.source-line {
+  margin: 0;
+}
+
+.macro-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.macro-grid b {
+  min-width: 0;
+  padding: 8px 6px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--text);
+  background: rgba(247, 247, 242, .74);
+  text-align: center;
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+.macro-grid small {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 850;
+}
+
+.source-line a {
+  color: var(--accent-strong);
+  font-weight: 850;
 }
 
 .post {
@@ -1293,6 +1565,70 @@ textarea::placeholder {
   margin-top: 18px;
 }
 
+.part-guide-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.part-guide-heading h3 {
+  margin-bottom: 0;
+}
+
+.part-guide-heading span {
+  color: var(--muted);
+  font-size: 12px;
+  text-align: right;
+}
+
+.part-guide-list {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.part-guide-card {
+  min-width: 0;
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 252, .62);
+}
+
+.part-guide-card > div {
+  display: grid;
+  gap: 3px;
+}
+
+.part-guide-card span {
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.part-guide-card h4 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.part-guide-card p,
+.part-guide-card ul {
+  margin: 9px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.part-guide-card ul {
+  padding-left: 18px;
+}
+
+.part-guide-card li + li {
+  margin-top: 4px;
+}
+
 .big-avatar {
   width: 88px;
   height: 88px;
@@ -1367,6 +1703,17 @@ textarea::placeholder {
 .playlist {
   display: grid;
   gap: 8px;
+}
+
+.playlist-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.playlist-actions .btn.danger {
+  min-width: 76px;
+  color: var(--danger);
 }
 
 .empty {
@@ -1497,6 +1844,10 @@ textarea::placeholder {
   line-height: 1.65;
 }
 
+.notice-item .btn {
+  margin-top: 10px;
+}
+
 .sponsor-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1560,6 +1911,16 @@ textarea::placeholder {
   font-size: 22px;
 }
 
+.version-card strong small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.version-card.has-update {
+  border-color: rgba(var(--accent-rgb), .38);
+  background: rgba(var(--accent-rgb), .08);
+}
+
 .confirm-modal {
   width: min(390px, 100%);
 }
@@ -1595,6 +1956,18 @@ textarea::placeholder {
   font-variant-numeric: tabular-nums;
 }
 
+.playlist-confirm-name {
+  gap: 14px;
+}
+
+.playlist-confirm-name strong {
+  min-width: 0;
+  max-width: 220px;
+  overflow-wrap: anywhere;
+  font-size: 16px;
+  text-align: right;
+}
+
 .confirm-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1622,6 +1995,10 @@ textarea::placeholder {
 }
 
 @media (max-width: 980px) {
+  .food-method-row {
+    grid-template-columns: 1fr;
+  }
+
   .app {
     grid-template-columns: 1fr;
   }
@@ -1870,11 +2247,13 @@ textarea::placeholder {
   .cards,
   .goal-metrics,
   .result-grid,
+  .food-ref-list,
   .sponsor-grid,
   .diary-summary,
   .diary-filter-grid,
   .review-helper,
   .friend-filter-grid,
+  .part-guide-list,
   .form-grid,
   .actions,
   .backup-actions,
@@ -1899,10 +2278,8 @@ textarea::placeholder {
   .today-timer {
     grid-template-columns: minmax(0, 1fr);
     gap: 8px;
-    padding-left: 0;
-    padding-top: 12px;
-    border-left: 0;
-    border-top: 1px solid var(--line);
+    padding: 12px;
+    border: 1px solid rgba(var(--accent-rgb), .28);
   }
   .timer-readout {
     gap: 5px;
@@ -1927,6 +2304,34 @@ textarea::placeholder {
     padding: 0 6px;
     font-size: 13px;
     white-space: nowrap;
+  }
+  .panel-action-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .macro-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .food-method-row {
+    padding: 12px;
+  }
+  .food-method-macros {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .food-method-macros b:nth-child(odd) {
+    border-left: 0;
+  }
+  .food-ref-list-item {
+    grid-template-columns: minmax(0, 1fr) auto 14px;
+  }
+  .part-guide-heading {
+    display: grid;
+  }
+  .part-guide-heading span {
+    text-align: left;
+  }
+  .playlist-actions {
+    grid-template-columns: 1fr;
   }
   .status-tile {
     min-height: 76px;

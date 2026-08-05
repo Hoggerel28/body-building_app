@@ -1,0 +1,14 @@
+{
+  "latestVersion": "0.2.1",
+  "latestVersionCode": 2,
+  "title": "练了没 0.2.1 测试版",
+  "releaseNotes": [
+    "热量参考改为纯文字分类浏览，支持查看 55 种食物和多种做法估算。",
+    "动作库扩展到每个部位至少 25 个动作，并移除自定义动作输入。",
+    "训练日记日期详情新增当天训练部位说明，歌单支持去重和删除确认。"
+  ],
+  "releaseDate": "2026-08-05",
+  "downloadPageUrl": "",
+  "apkUrl": "",
+  "mandatory": false
+}

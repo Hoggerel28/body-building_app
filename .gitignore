@@ -23,6 +23,7 @@ Thumbs.db
 fittrack-preview.png
 *.webm
 *.mp4
+release-site/
 
 # 本地环境配置
 .env
@@ -31,6 +32,9 @@ fittrack-preview.png
 
 # Android / Capacitor 本地构建缓存
 android/local.properties
+android/keystore.properties
+android/app/*.jks
+android/app/*.keystore
 android/.gradle/
 android/app/build/
 *.apk
@@ -39,3 +43,7 @@ android/app/build/
 # 本地设计源素材和预览稿，不是运行必需
 muscle pictures/
 ui-previews/
+assets/food-reference/
+
+# 本地私密备份
+重要的东西/
