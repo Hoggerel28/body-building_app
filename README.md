@@ -2,6 +2,12 @@
 
 本项目是一个健身记录 Web App，并已接入 Capacitor Android 工程。当前应用支持训练记录、训练计时、肌肉负荷图、复盘日记、好友、头像、歌单、反馈、通知、赞助入口和版本检测。
 
+## 正式下载
+
+- 下载页：https://hoggerel28.github.io/body-building_app/docs/
+- Android APK：https://hoggerel28.github.io/body-building_app/docs/lianleme-latest.apk
+- iOS：暂无 iOS 版本
+
 ## 本地运行
 
 ```powershell
@@ -38,10 +44,10 @@ VITE_SUPABASE_ANON_KEY=your-public-anon-key
 
 ## 版本检测
 
-静态分发页位于 `release-site/`。部署后把固定的 `version.json` 地址配置到本地 `.env`：
+GitHub Pages 静态分发页位于 `docs/`。正式包内应配置固定的 `version.json` 地址：
 
 ```env
-VITE_VERSION_MANIFEST_URL=https://download.example.com/lianleme/version.json
+VITE_VERSION_MANIFEST_URL=https://hoggerel28.github.io/body-building_app/docs/version.json
 ```
 
 App 启动、进入通知页或“我的”页时会读取该清单，以 Android `versionCode` 对比
@@ -49,7 +55,7 @@ App 启动、进入通知页或“我的”页时会读取该清单，以 Androi
 
 如果未配置远程源或网络不可用，应用会使用包内 `public/version.json` 作为兜底。
 旧的 `version`、`notes`、`downloadUrl` 字段和 `VITE_VERSION_MANIFEST_URLS` 仍兼容。
-发布和替换 APK 的步骤见 `release-site/README.md`。
+发布和替换 APK 的步骤见 `docs/README.md`。
 
 ## Android 打包
 
