@@ -193,6 +193,41 @@ export const foodCalorieReference = Object.freeze([
       variant("steamed", "清蒸", "150g", 150, "g", 63, 3.3, 12.6, 0.7, "reference", "不计酱汁。"),
       variant("stir-fried", "蚝油香菇", "1 份约 220g", 220, "g", 190, 5, 20, 11, "estimated", "含蚝油、淀粉和约 9g 油。"),
     ]),
+    food("bok-choy", "小白菜", ["青菜", "油菜"], "bok choy raw and cooked", [
+      variant("raw", "生食", "100g", 100, "g", 13, 1.5, 2.2, 0.2, "reference", "按可食部分估算。"),
+      variant("boiled", "白灼或水煮", "200g", 200, "g", 30, 3, 5, 0.4, "reference", "不计酱油和热油。"),
+      variant("stir-fried", "蒜蓉清炒", "1 份约 250g", 250, "g", 150, 4, 10, 10, "estimated", "按约 10g 烹调油估算。"),
+    ]),
+    food("cauliflower", "菜花", ["花椰菜"], "cauliflower cooked and raw", [
+      variant("raw", "生食", "100g", 100, "g", 25, 1.9, 5, 0.3, "reference", "按可食部分估算。"),
+      variant("steamed", "蒸或水煮", "200g", 200, "g", 50, 3.8, 10, 0.6, "reference", "不计调味汁。"),
+      variant("dry-pot", "干锅菜花", "1 份约 250g", 250, "g", 220, 6, 20, 13, "estimated", "含少量腊肉、辣椒和烹调油。"),
+    ]),
+    food("eggplant", "茄子", ["长茄子"], "eggplant cooked", [
+      variant("steamed", "清蒸", "200g", 200, "g", 50, 2, 12, 0.6, "reference", "不计蒜蓉和酱汁。"),
+      variant("garlic", "蒜泥茄子", "1 份约 250g", 250, "g", 150, 3, 18, 7, "estimated", "按少量芝麻油和调味汁估算。"),
+      variant("fish-flavor", "鱼香茄子", "1 份约 300g", 300, "g", 360, 5, 42, 19, "estimated", "煎炸吸油和糖量差异较大。"),
+    ]),
+    food("celery", "芹菜", ["西芹"], "celery raw and cooked", [
+      variant("raw", "生食", "100g", 100, "g", 16, 0.7, 3, 0.2, "reference", "按可食部分估算。"),
+      variant("stir-fried", "清炒芹菜", "200g", 200, "g", 105, 2.5, 7, 7, "estimated", "按约 7g 烹调油估算。"),
+      variant("beef", "芹菜炒牛肉", "1 份约 280g", 280, "g", 330, 28, 14, 18, "estimated", "牛肉部位和用油量会影响结果。"),
+    ]),
+    food("zucchini", "西葫芦", ["嫩瓜"], "zucchini cooked", [
+      variant("raw", "生食", "150g", 150, "g", 26, 1.8, 4.8, 0.5, "reference", "按可食部分估算。"),
+      variant("stir-fried", "清炒西葫芦", "1 份约 250g", 250, "g", 120, 3, 12, 7, "estimated", "按约 7g 烹调油估算。"),
+      variant("egg", "西葫芦炒蛋", "1 份约 300g", 300, "g", 290, 17, 12, 20, "estimated", "按两个鸡蛋和少量油估算。"),
+    ]),
+    food("winter-melon", "冬瓜", ["白瓜"], "winter melon cooked", [
+      variant("boiled", "清煮", "250g", 250, "g", 30, 0.8, 7, 0.2, "reference", "不计汤底。"),
+      variant("soup", "冬瓜排骨汤", "1 碗约 400g", 400, "g", 260, 18, 10, 16, "estimated", "排骨肥瘦和汤面油脂会影响结果。"),
+      variant("stir-fried", "虾皮炒冬瓜", "1 份约 300g", 300, "g", 115, 5, 11, 5, "estimated", "按少量虾皮和约 5g 油估算。"),
+    ]),
+    food("radish", "白萝卜", ["萝卜"], "daikon radish raw and cooked", [
+      variant("raw", "生食", "150g", 150, "g", 27, 0.9, 6, 0.2, "reference", "按可食部分估算。"),
+      variant("boiled", "清炖", "250g", 250, "g", 45, 1.5, 10, 0.3, "reference", "不计肉汤和酱汁。"),
+      variant("beef-stew", "萝卜炖牛腩", "1 份约 350g", 350, "g", 430, 28, 19, 26, "estimated", "牛腩肥瘦和汤汁用油差异较大。"),
+    ]),
   ]),
   category("staples", "主食", [
     food("white-rice", "白米饭", ["米饭", "熟米饭"], "rice white cooked", [
@@ -267,6 +302,36 @@ export const foodCalorieReference = Object.freeze([
       variant("two", "生食", "2 个约 160g 可食部", 160, "g", 98, 1.8, 23.6, 0.8, "reference", "成熟度会影响甜度。"),
       variant("smoothie", "酸奶猕猴桃昔", "300ml", 300, "ml", 235, 11, 39, 4.5, "estimated", "按无糖酸奶、猕猴桃和少量蜂蜜估算。"),
     ]),
+    food("pear", "梨", ["雪梨"], "pears raw", [
+      variant("small", "带皮生食", "150g 可食部", 150, "g", 86, 0.6, 23, 0.2, "reference", "约一个小梨。"),
+      variant("medium", "带皮生食", "220g 可食部", 220, "g", 126, 0.8, 33.7, 0.3, "reference", "品种和成熟度会影响甜度。"),
+      variant("stewed", "冰糖炖梨", "1 碗约 300g", 300, "g", 190, 0.8, 48, 0.3, "estimated", "含冰糖，糖量按常见家用配方估算。"),
+    ]),
+    food("peach", "桃", ["水蜜桃"], "peaches raw", [
+      variant("small", "生食", "150g 可食部", 150, "g", 59, 1.4, 14.3, 0.4, "reference", "按去核可食部分估算。"),
+      variant("medium", "生食", "220g 可食部", 220, "g", 86, 2, 21, 0.6, "reference", "成熟度会影响含糖量。"),
+      variant("canned", "糖水黄桃", "150g", 150, "g", 120, 0.8, 30, 0.2, "estimated", "糖水浸泡产品以包装标签为准。"),
+    ]),
+    food("watermelon", "西瓜", ["无籽西瓜"], "watermelon raw", [
+      variant("small", "生食", "300g 可食部", 300, "g", 90, 1.8, 22.7, 0.5, "reference", "按去皮去籽可食部估算。"),
+      variant("large", "生食", "500g 可食部", 500, "g", 150, 3, 38, 0.8, "reference", "含水量高，建议按实际重量记录。"),
+      variant("juice", "鲜榨西瓜汁", "300ml", 300, "ml", 95, 1.8, 23, 0.5, "estimated", "榨汁后纤维减少，不含额外糖。"),
+    ]),
+    food("mango", "芒果", ["台农芒"], "mango raw", [
+      variant("small", "生食", "150g 可食部", 150, "g", 90, 1.2, 22.5, 0.6, "reference", "按去皮去核可食部估算。"),
+      variant("medium", "生食", "250g 可食部", 250, "g", 150, 2, 37.5, 1, "reference", "品种和成熟度会影响甜度。"),
+      variant("sticky-rice", "芒果糯米饭", "1 份约 300g", 300, "g", 480, 7, 79, 15, "estimated", "椰浆和糯米会显著提高热量。"),
+    ]),
+    food("pineapple", "菠萝", ["凤梨"], "pineapple raw", [
+      variant("small", "生食", "150g 可食部", 150, "g", 75, 0.8, 19.7, 0.2, "reference", "按去皮可食部分估算。"),
+      variant("large", "生食", "250g 可食部", 250, "g", 125, 1.4, 32.8, 0.3, "reference", "成熟度和品种会影响糖度。"),
+      variant("fried-rice", "菠萝炒饭", "1 份约 400g", 400, "g", 650, 18, 94, 22, "estimated", "米饭、坚果和用油量差异较大。"),
+    ]),
+    food("pomelo", "柚子", ["蜜柚"], "pomelo raw", [
+      variant("small", "生食", "200g 可食部", 200, "g", 76, 1.4, 19, 0.2, "reference", "按去皮去籽可食部估算。"),
+      variant("large", "生食", "350g 可食部", 350, "g", 133, 2.5, 33, 0.4, "reference", "不同品种甜度差异较大。"),
+      variant("salad", "柚子虾仁沙拉", "1 份约 300g", 300, "g", 240, 22, 24, 7, "estimated", "酱汁和坚果会改变总热量。"),
+    ]),
   ]),
   category("nuts-seeds", "坚果种子", [
     food("almonds", "巴旦木", ["杏仁"], "almonds roasted", [
@@ -298,6 +363,26 @@ export const foodCalorieReference = Object.freeze([
       variant("spoon", "干籽", "10g", 10, "g", 49, 1.7, 4.2, 3.1, "reference", "约一平汤匙。"),
       variant("standard", "干籽", "25g", 25, "g", 122, 4.1, 10.5, 7.7, "reference", "吸水后重量增加但总热量不变。"),
       variant("pudding", "牛奶奇亚籽布丁", "1 杯约 250g", 250, "g", 245, 10, 26, 12, "estimated", "按 25g 奇亚籽、牛奶和少量蜂蜜估算。"),
+    ]),
+    food("pistachios", "开心果", ["开心果仁"], "pistachios roasted", [
+      variant("small", "无盐原味", "15g", 15, "g", 84, 3, 4.2, 6.7, "reference", "按去壳果仁估算。"),
+      variant("standard", "干烤", "30g", 30, "g", 168, 6, 8.4, 13.4, "reference", "建议按去壳重量记录。"),
+      variant("salted", "盐焗", "30g", 30, "g", 172, 6, 8, 13.8, "estimated", "钠含量取决于裹盐量。"),
+    ]),
+    food("macadamia", "夏威夷果", ["澳洲坚果"], "macadamia nuts roasted", [
+      variant("small", "原味", "15g", 15, "g", 108, 1.2, 2.1, 11.4, "reference", "热量密度较高，建议称重。"),
+      variant("standard", "干烤", "30g", 30, "g", 216, 2.4, 4.2, 22.8, "reference", "不含糖衣。"),
+      variant("honey", "蜂蜜烤", "30g", 30, "g", 235, 2.2, 10, 22, "estimated", "含糖衣和少量油。"),
+    ]),
+    food("sunflower-seeds", "葵花籽仁", ["瓜子仁"], "sunflower seed kernels roasted", [
+      variant("small", "原味", "15g", 15, "g", 88, 3.1, 3, 7.7, "reference", "按去壳籽仁估算。"),
+      variant("standard", "干烤", "30g", 30, "g", 176, 6.2, 6, 15.4, "reference", "不计瓜子壳重量。"),
+      variant("salted", "盐焗", "30g", 30, "g", 180, 6, 6, 15.8, "estimated", "钠含量取决于裹盐量。"),
+    ]),
+    food("sesame-seeds", "芝麻", ["白芝麻", "黑芝麻"], "sesame seeds dried", [
+      variant("small", "熟芝麻", "10g", 10, "g", 57, 1.7, 2.3, 5, "reference", "适合撒在菜肴或粥中记录。"),
+      variant("standard", "熟芝麻", "20g", 20, "g", 115, 3.4, 4.6, 10, "reference", "不含额外糖和油。"),
+      variant("paste", "芝麻酱", "20g", 20, "g", 120, 3.5, 3.5, 10.5, "estimated", "不同品牌含油量差异较大。"),
     ]),
   ]),
   category("drinks", "饮品", [

@@ -308,6 +308,7 @@
           </div>
           <div class="actions">
             <a id="apk-download" class="btn primary" href="./lianleme-latest.apk">下载 Android APK</a>
+            <a id="mirror-download" class="btn" aria-disabled="true">国内镜像待配置</a>
             <a class="btn" href="./version.json">查看 version.json</a>
           </div>
           <ul>
@@ -391,6 +392,7 @@
       });
 
       const download = document.getElementById("apk-download");
+      const mirror = document.getElementById("mirror-download");
       const status = document.getElementById("load-status");
       if (apkUrl) {
         download.href = apkUrl;
@@ -401,6 +403,17 @@
         download.setAttribute("aria-disabled", "true");
         download.textContent = "安装包待上传";
         status.textContent = "version.json 尚未配置 APK 下载地址。";
+      }
+      const mirrorUrl = resolveHttpUrl(manifest.mirrorApkUrl || manifest.domesticMirrorUrl || manifest.mirrorUrl);
+      if (mirrorUrl) {
+        mirror.href = mirrorUrl;
+        mirror.rel = "noopener";
+        mirror.removeAttribute("aria-disabled");
+        mirror.textContent = String(manifest.mirrorLabel || "国内镜像下载").trim() || "国内镜像下载";
+      } else {
+        mirror.removeAttribute("href");
+        mirror.setAttribute("aria-disabled", "true");
+        mirror.textContent = "国内镜像待配置";
       }
     }
 

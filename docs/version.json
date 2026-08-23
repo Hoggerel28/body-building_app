@@ -11,7 +11,9 @@
   ],
   "downloadPageUrl": "./index.html",
   "apkUrl": "./lianleme-latest.apk",
+  "mirrorLabel": "国内镜像下载",
+  "mirrorApkUrl": "",
   "apkSize": "38.49 MB",
-  "sha256": "6EE72BE8C9993F76579608B1560C67FE3095C6C086056A051DA4150E79D6605C",
+  "sha256": "44BC112961E71569613F0CAC500D3737CCDC14C7803A2FBE88FBD63434C412F4",
   "mandatory": false
 }

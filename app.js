@@ -72,8 +72,10 @@ const BUILT_IN_VERSION_MANIFEST = {
   title: "练了没 0.2.2 正式版",
   releaseNotes: ["新增 Supabase 后台通知和 App 内官方下载入口。"],
   releaseDate: "2026-08-05",
-  downloadPageUrl: "",
+  downloadPageUrl: DEFAULT_DOWNLOAD_PAGE_URL,
   apkUrl: "",
+  mirrorLabel: "国内镜像下载",
+  mirrorApkUrl: "",
   mandatory: false,
 };
 const sponsorConfig = {
@@ -156,6 +158,7 @@ const seed = {
   selectedParts: ["胸部"],
   selectedChartPart: "胸部",
   selectedActionFilter: "全部",
+  actionQuery: "",
   selectedPostDate: today(),
   diaryPostFilter: "all",
   diaryFriendId: "all",
@@ -203,6 +206,7 @@ const seed = {
   feedbackReports: [],
   friends: [],
   friendRequests: [],
+  customActions: {},
 };
 
 function escapeHtml(value = "") {
@@ -331,7 +335,8 @@ function normalizeRecord(record) {
   const originalPart = bodyPartSet.has(record.part) ? record.part : normalizeParts(record.parts, seed.selectedPart)[0];
   const partActions = asArray(actionsByPart[originalPart]);
   const requestedAction = sanitizeText(record.action, 50);
-  const action = partActions.includes(requestedAction) ? requestedAction : (partActions[0] || "");
+  // Keep user-defined actions intact; built-in actions still fall back when empty.
+  const action = requestedAction || (partActions[0] || "");
   const matchingParts = bodyParts.filter((part) => asArray(actionsByPart[part]).includes(action));
   const part = matchingParts.includes(originalPart) ? originalPart : (matchingParts[0] || originalPart);
   const candidateParts = normalizeParts([part, ...asArray(record.parts)], part);
@@ -614,6 +619,7 @@ function normalizeState(input = {}) {
   merged.selectedPart = merged.selectedParts[0] || seed.selectedPart;
   merged.selectedChartPart = bodyPartSet.has(source.selectedChartPart) ? source.selectedChartPart : seed.selectedChartPart;
   merged.selectedActionFilter = sanitizeText(source.selectedActionFilter || "全部", 50);
+  merged.actionQuery = sanitizeText(source.actionQuery, 50);
   merged.diaryPostFilter = ["all", "mine", "friends"].includes(source.diaryPostFilter) ? source.diaryPostFilter : "all";
   merged.diaryFriendId = sanitizeText(source.diaryFriendId || "all", 120) || "all";
   merged.editingPostId = sanitizeText(source.editingPostId, 120);
@@ -651,6 +657,10 @@ function normalizeState(input = {}) {
   merged.feedbackReports = asArray(source.feedbackReports).map(normalizeFeedbackReport).filter(Boolean).sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
   merged.friends = asArray(source.friends).map(normalizeFriend).filter((item) => item && item.name);
   merged.friendRequests = asArray(source.friendRequests).map(normalizeFriend).filter((item) => item && item.name);
+  merged.customActions = Object.fromEntries(bodyParts.map((part) => [
+    part,
+    [...new Set(asArray(source.customActions?.[part]).map((item) => sanitizeText(item, 50)).filter(Boolean))],
+  ]));
   merged.selectedPostDate = normalizeDate(source.selectedPostDate, merged.posts[0]?.date || merged.records[0]?.date || today());
   if (!merged.posts.some((post) => post.id === merged.editingPostId)) merged.editingPostId = null;
   merged.editingId = merged.records.some((record) => record.id === source.editingId) ? source.editingId : null;
@@ -2131,6 +2141,13 @@ function normalizeVersionManifest(manifest, manifestUrl = "") {
   };
 }
 
+function hasUsableVersionManifest(manifest) {
+  if (!isObject(manifest)) return false;
+  const latestVersion = sanitizeText(manifest.latestVersion || manifest.version, 40);
+  const latestVersionCode = Math.max(0, Math.trunc(Number(manifest.latestVersionCode) || 0));
+  return Boolean(latestVersion) || latestVersionCode > 0;
+}
+
 async function checkAppVersion({ interactive = true } = {}) {
   if (state.versionChecking) return;
   state.versionChecking = true;
@@ -2143,7 +2160,9 @@ async function checkAppVersion({ interactive = true } = {}) {
     try {
       const response = await fetch(url, { cache: "no-store" });
       if (!response.ok) throw new Error(`manifest ${response.status}`);
-      manifest = normalizeVersionManifest(await response.json(), url);
+      const remoteManifest = await response.json();
+      if (!hasUsableVersionManifest(remoteManifest)) throw new Error("manifest has no version");
+      manifest = normalizeVersionManifest(remoteManifest, url);
       source = url === LOCAL_VERSION_MANIFEST_URL ? "local" : "remote";
       break;
     } catch {
@@ -2171,7 +2190,7 @@ async function checkAppVersion({ interactive = true } = {}) {
       downloadUrl: manifest.downloadUrl || officialDownloadPageUrl(),
     });
     state.versionStatus = `已有新版本 v${manifest.latestVersion}（${manifest.latestVersionCode || "未提供版本码"}）：${notes}`;
-    if (interactive) toast(manifest.downloadUrl ? "已有新版本，可前往下载" : "已有新版本，下载地址暂未配置");
+    if (interactive) toast(state.versionUpdate.downloadUrl ? "已有新版本，可前往下载" : "已有新版本，下载地址暂未配置");
   }
   state.versionChecking = false;
   save();
@@ -2310,6 +2329,10 @@ function render() {
           <div><span class="streak-num">${streak}</span> 天</div>
           <div class="week">${weekDots()}</div>
           <div class="muted">${todayCheckedIn() ? "今天已经练过" : "今天还没打卡"}</div>
+          <div class="streak-metrics">
+            <span>连续 <b>${streak}</b> 天</span>
+            <span>本周动作容量 <b>${thisWeekRecords().length}</b> 次</span>
+          </div>
           <div class="progress-line"><span style="width:${progressWidth}%"></span></div>
         </div>
       </aside>
@@ -2323,7 +2346,6 @@ function render() {
               <button class="${state.goal === "增肌" ? "on" : ""}" data-goal="增肌">增肌</button>
             </span>
           </div>
-          <div class="mobile-streak">连续 <b>${streak}</b> 天 · 本周 ${thisWeekRecords().length} 次</div>
           <div class="user"><span class="avatar">${avatarContent()}</span><span>${escapeHtml(state.profile.name)} · Lv.${state.profile.level}</span></div>
           <button class="menu-toggle" type="button" data-menu-open aria-controls="appDrawer" aria-expanded="false" aria-label="打开功能菜单">
             <span></span><span></span><span></span>
@@ -2517,8 +2539,6 @@ function homePage() {
     <section class="page ${state.activePage === "home" ? "active" : ""}">
       <div class="dashboard-strip">
         ${todayStatusTile()}
-        ${statusTile("连续", `${streakDays()} 天`, "真实自然日计算")}
-        ${statusTile("本周", `${thisWeekRecords().length} 次`, goalConfig[state.goal].focus)}
       </div>
       <div class="grid home-grid">
         <div class="panel muscle-card">
@@ -2550,6 +2570,22 @@ function homePage() {
 
 function statusTile(label, value, detail) {
   return `<div class="status-tile"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong><small>${escapeHtml(detail)}</small></div>`;
+}
+
+function actionsForPart(part) {
+  const builtIns = asArray(actionsByPart[part]);
+  const custom = asArray(state?.customActions?.[part]);
+  return [...new Set([...builtIns, ...custom])];
+}
+
+function addCustomAction(part, actionName) {
+  const name = sanitizeText(actionName, 50);
+  if (!bodyPartSet.has(part) || !name) return false;
+  if (!state.customActions || !isObject(state.customActions)) state.customActions = {};
+  const list = asArray(state.customActions[part]);
+  if (!list.includes(name)) state.customActions[part] = [...list, name];
+  save();
+  return true;
 }
 
 function todayStatusTile() {
@@ -2840,7 +2876,7 @@ function backMuscles(hot) {
 function recordForm() {
   const record = state.records.find((item) => item.id === state.editingId) || null;
   const primaryPart = record ? record.part : (state.selectedPart || state.selectedParts[0] || "胸部");
-  const actions = asArray(actionsByPart[primaryPart]);
+  const actions = actionsForPart(primaryPart);
   const draft = record || { id: "", date: today(), part: primaryPart, action: actions[0] || "", weight: "", reps: "", sets: "", note: "" };
   const selectedAction = actions.includes(draft.action) ? draft.action : (actions[0] || "");
   return `
@@ -2848,7 +2884,7 @@ function recordForm() {
       <input type="hidden" name="id" value="${escapeAttr(draft.id)}">
       <div class="field full"><label>日期</label><input name="date" type="date" value="${escapeAttr(draft.date)}" required></div>
       <div class="field"><label>主要部位</label><select name="part">${bodyParts.map((part) => `<option ${part === draft.part ? "selected" : ""}>${escapeHtml(part)}</option>`).join("")}</select></div>
-      <div class="field"><label>动作</label><select name="action" required>${actions.map((action) => `<option value="${escapeAttr(action)}" ${action === selectedAction ? "selected" : ""}>${escapeHtml(action)}</option>`).join("")}</select></div>
+      <div class="field action-picker"><label for="actionSearch">动作</label><input id="actionSearch" type="search" placeholder="检索动作" autocomplete="off"><select name="action" id="actionSelect" required>${actions.map((action) => `<option value="${escapeAttr(action)}" ${action === selectedAction ? "selected" : ""}>${escapeHtml(action)}</option>`).join("")}</select><button class="mini custom-action-trigger" type="button" data-add-custom-action hidden>自定义动作</button><div class="custom-action-entry" data-custom-action-entry hidden><input id="customActionName" type="text" maxlength="50" placeholder="输入自定义动作名称"><button class="mini" type="button" data-confirm-custom-action>确认保存</button></div><small class="muted action-picker-hint">输入关键词自动筛选；没有匹配时可保存自定义动作。</small></div>
       <div class="field"><label>重量 kg</label><input name="weight" type="number" min="0" step="0.5" placeholder="60" value="${escapeAttr(draft.weight)}"></div>
       <div class="field"><label>次数</label><input name="reps" type="number" min="0" placeholder="12" value="${escapeAttr(draft.reps)}"></div>
       <div class="field"><label>组数</label><input name="sets" type="number" min="0" placeholder="4" value="${escapeAttr(draft.sets)}"></div>
@@ -3000,13 +3036,13 @@ function planPage() {
             <span>常见食物热量、蛋白质和三大营养素估算。</span>
             <button class="btn ghost" type="button" data-open-calorie-reference>热量参考</button>
           </div>
-          <form id="foodForm" class="form-grid">
+          <form id="foodForm" class="form-grid food-record-form">
             <div class="field"><label>食物</label><input name="name" placeholder="如：鸡胸肉饭" required></div>
             <div class="field"><label>热量 kcal</label><input name="kcal" type="number" min="0" placeholder="520" required></div>
             <div class="field"><label>蛋白质 g</label><input name="protein" type="number" min="0" placeholder="35"></div>
             <button class="btn primary field full">记录饮食</button>
           </form>
-          <form id="weightForm" class="form-grid">
+          <form id="weightForm" class="form-grid weight-record-form">
             <div class="field"><label>今日体重 kg</label><input name="weight" type="number" step="0.1" value="${state.profile.weight || ""}" required></div>
             <div class="field"><label>体脂率 %</label><input name="fat" type="number" step="0.1" value="${state.profile.fat || ""}"></div>
             <button class="btn ghost field">保存体重</button>
@@ -4057,6 +4093,63 @@ function toggleMuscle(part) {
   render();
 }
 
+function bindActionPicker() {
+  const search = document.getElementById("actionSearch");
+  const select = document.getElementById("actionSelect");
+  const customButton = document.querySelector("[data-add-custom-action]");
+  const customEntry = document.querySelector("[data-custom-action-entry]");
+  const customInput = document.getElementById("customActionName");
+  const confirmCustom = document.querySelector("[data-confirm-custom-action]");
+  const partSelect = document.querySelector("#recordForm select[name='part']");
+  if (!search || !select || !customButton || !customEntry || !customInput || !confirmCustom || !partSelect) return;
+
+  const refresh = () => {
+    const query = sanitizeText(search.value, 50).toLowerCase();
+    const options = [...select.options];
+    const matches = options.filter((option) => !query || option.textContent.toLowerCase().includes(query));
+    options.forEach((option) => { option.hidden = Boolean(query) && !matches.includes(option); });
+    if (matches.length) {
+      if (!matches.some((option) => option.value === select.value)) select.value = matches[0].value;
+      customButton.hidden = true;
+      customEntry.hidden = true;
+    } else {
+      select.value = "";
+      customButton.hidden = false;
+      customButton.textContent = `自定义动作「${search.value.trim() || "新动作"}」`;
+    }
+    state.actionQuery = search.value;
+  };
+
+  search.value = state.actionQuery || "";
+  search.oninput = refresh;
+  select.onchange = () => {
+    state.actionQuery = "";
+    search.value = "";
+    refresh();
+  };
+  customButton.onclick = () => {
+    customEntry.hidden = false;
+    customInput.value = search.value.trim();
+    customInput.focus();
+  };
+  confirmCustom.onclick = () => {
+    const cleaned = sanitizeText(customInput.value, 50);
+    if (!cleaned) return;
+    const part = partSelect.value;
+    if (!addCustomAction(part, cleaned)) return;
+    if (![...select.options].some((option) => option.value === cleaned)) {
+      select.add(new Option(cleaned, cleaned));
+    }
+    select.value = cleaned;
+    search.value = "";
+    customInput.value = "";
+    state.actionQuery = "";
+    refresh();
+    toast(`已保存自定义动作：${cleaned}`);
+  };
+  refresh();
+}
+
 function bindForms() {
   const recordFormEl = document.getElementById("recordForm");
   if (recordFormEl) {
@@ -4100,6 +4193,7 @@ function bindForms() {
         toast(idx >= 0 ? "记录已本地修改，云同步失败" : "训练已本地保存，云同步失败");
       }
     };
+    bindActionPicker();
   }
   document.querySelectorAll("[data-reset-form]").forEach((btn) => btn.onclick = () => {
     state.editingId = null;

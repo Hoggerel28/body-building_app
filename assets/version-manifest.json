@@ -1,14 +1,16 @@
 {
-  "latestVersion": "0.2.1",
-  "latestVersionCode": 2,
-  "title": "练了没 0.2.1 测试版",
+  "latestVersion": "0.2.2",
+  "latestVersionCode": 3,
+  "title": "练了没 0.2.2 正式版",
   "releaseNotes": [
-    "热量参考改为纯文字分类浏览，支持查看 55 种食物和多种做法估算。",
-    "动作库扩展到每个部位至少 25 个动作，并移除自定义动作输入。",
-    "训练日记日期详情新增当天训练部位说明，歌单支持去重和删除确认。"
+    "新增 Supabase 后台通知，管理员可在 app_notices 表发布 App 内公告。",
+    "版本检测和通知窗口新增固定官方下载页入口。",
+    "本地版本清单补充官方下载页兜底，断网或远程源不可用时仍能看到下载地址。"
   ],
   "releaseDate": "2026-08-05",
-  "downloadPageUrl": "",
+  "downloadPageUrl": "https://hoggerel28.github.io/body-building_app/docs/",
   "apkUrl": "",
+  "mirrorLabel": "国内镜像下载",
+  "mirrorApkUrl": "",
   "mandatory": false
 }

@@ -168,6 +168,26 @@ a { color: inherit; }
   line-height: 1;
 }
 
+.streak-metrics {
+  display: grid;
+  gap: 4px;
+  margin: 14px 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.streak-metrics span {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.streak-metrics b {
+  color: var(--text);
+  font-size: 15px;
+}
+
 .week {
   display: flex;
   gap: 7px;
@@ -796,6 +816,49 @@ a { color: inherit; }
 
 .field.full {
   grid-column: 1 / -1;
+}
+
+.action-picker {
+  align-content: start;
+}
+
+.action-picker select {
+  min-height: 44px;
+}
+
+.action-picker-hint {
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.custom-action-trigger {
+  width: 100%;
+  min-height: 36px;
+  color: var(--accent-strong);
+  border-color: rgba(var(--accent-rgb), .35);
+  background: rgba(var(--accent-rgb), .08);
+}
+
+.custom-action-entry {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid rgba(var(--accent-rgb), .25);
+  border-radius: 8px;
+  background: rgba(var(--accent-rgb), .06);
+}
+
+.custom-action-entry .mini {
+  min-height: 38px;
+}
+
+.food-record-form {
+  margin-bottom: 12px;
+}
+
+.weight-record-form {
+  margin-top: 4px;
 }
 
 label {
