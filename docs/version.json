@@ -2,18 +2,17 @@
   "latestVersion": "0.2.2",
   "latestVersionCode": 3,
   "title": "练了没 0.2.2 正式版",
-  "releaseDate": "2026-08-05",
+  "releaseDate": "2026-08-23",
   "releaseNotes": [
-    "新增 Supabase 后台通知，管理员可在 app_notices 表发布 App 内公告。",
-    "版本检测和通知窗口新增固定官方下载页入口。",
-    "普通通知按钮支持打开每条通知自己的 action_url。",
-    "本地版本清单补充官方下载页兜底，断网或远程源不可用时仍能看到下载地址。"
+    "动作选择支持检索、无匹配时保存自定义动作，并持久化到移动端。",
+    "自定义动作会进入训练记录、部位动作筛选和力量曲线。",
+    "训练统计移入侧边栏连续打卡区，扩充热量参考食物，并增加国内镜像入口。"
   ],
   "downloadPageUrl": "./index.html",
   "apkUrl": "./lianleme-latest.apk",
   "mirrorLabel": "国内镜像下载",
   "mirrorApkUrl": "",
   "apkSize": "38.49 MB",
-  "sha256": "44BC112961E71569613F0CAC500D3737CCDC14C7803A2FBE88FBD63434C412F4",
+  "sha256": "E3BC846064E8D0865C39D74281E42FC155C21561D4494DD0C4D3F682F88995DD",
   "mandatory": false
 }

@@ -3,11 +3,11 @@
   "latestVersionCode": 3,
   "title": "练了没 0.2.2 正式版",
   "releaseNotes": [
-    "新增 Supabase 后台通知，管理员可在 app_notices 表发布 App 内公告。",
-    "版本检测和通知窗口新增固定官方下载页入口。",
-    "本地版本清单补充官方下载页兜底，断网或远程源不可用时仍能看到下载地址。"
+    "动作选择支持检索、无匹配时保存自定义动作，并持久化到移动端。",
+    "自定义动作会进入训练记录、部位动作筛选和力量曲线。",
+    "训练统计移入侧边栏连续打卡区，扩充热量参考食物，并增加国内镜像入口。"
   ],
-  "releaseDate": "2026-08-05",
+  "releaseDate": "2026-08-23",
   "downloadPageUrl": "https://hoggerel28.github.io/body-building_app/docs/",
   "apkUrl": "",
   "mirrorLabel": "国内镜像下载",
