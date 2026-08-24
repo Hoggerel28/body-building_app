@@ -112,7 +112,7 @@
 
     .release {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 10px;
     }
 
@@ -132,6 +132,10 @@
       display: block;
       margin-top: 6px;
       font-size: 18px;
+    }
+
+    .meta.download-stat strong {
+      color: var(--accent-strong);
     }
 
     .download-grid,
@@ -295,6 +299,7 @@
         <div class="meta"><span>VersionCode</span><strong id="latest-version-code">-</strong></div>
         <div class="meta"><span>发布日期</span><strong id="release-date">-</strong></div>
         <div class="meta"><span>安装包</span><strong id="apk-size">正式 APK</strong></div>
+        <div class="meta download-stat"><span>累计下载</span><strong id="download-count">读取中</strong></div>
       </section>
 
       <div class="download-grid">
@@ -356,6 +361,75 @@
     </div>
   </main>
   <script>
+    const DOWNLOAD_ANALYTICS_URL = "https://ngedzxmcmlqwnbbibocb.supabase.co";
+    const DOWNLOAD_ANALYTICS_KEY = "sb_publishable_2d8uEyskEjsxy7yWiCYtZQ_X4i9V3Bl";
+    const DOWNLOAD_VISITOR_KEY = "lianleme.download.visitor.v1";
+    let activeReleaseKey = "";
+
+    function formatDownloadCount(value) {
+      const count = Math.max(0, Math.trunc(Number(value) || 0));
+      return `${new Intl.NumberFormat("zh-CN").format(count)} 次`;
+    }
+
+    function getDownloadVisitorId() {
+      try {
+        const existing = localStorage.getItem(DOWNLOAD_VISITOR_KEY);
+        if (/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(existing || "")) {
+          return existing;
+        }
+        const visitorId = crypto.randomUUID();
+        localStorage.setItem(DOWNLOAD_VISITOR_KEY, visitorId);
+        return visitorId;
+      } catch {
+        return crypto.randomUUID();
+      }
+    }
+
+    async function callDownloadRpc(name, payload, { keepalive = false } = {}) {
+      const response = await fetch(`${DOWNLOAD_ANALYTICS_URL}/rest/v1/rpc/${name}`, {
+        method: "POST",
+        headers: {
+          "apikey": DOWNLOAD_ANALYTICS_KEY,
+          "Authorization": `Bearer ${DOWNLOAD_ANALYTICS_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+        cache: "no-store",
+        keepalive,
+      });
+      if (!response.ok) throw new Error(`download analytics ${response.status}`);
+      return response.json();
+    }
+
+    async function loadDownloadCount(releaseKey) {
+      const countElement = document.getElementById("download-count");
+      if (!releaseKey) {
+        countElement.textContent = "-";
+        return;
+      }
+      try {
+        const count = await callDownloadRpc("get_download_count", {
+          p_release_key: releaseKey,
+        });
+        countElement.textContent = formatDownloadCount(count);
+      } catch {
+        countElement.textContent = "暂不可用";
+      }
+    }
+
+    async function recordDownload() {
+      if (!activeReleaseKey) return;
+      try {
+        const count = await callDownloadRpc("record_download", {
+          p_release_key: activeReleaseKey,
+          p_visitor_id: getDownloadVisitorId(),
+        }, { keepalive: true });
+        document.getElementById("download-count").textContent = formatDownloadCount(count);
+      } catch {
+        // 下载本身不应因统计服务暂时不可用而被阻塞。
+      }
+    }
+
     function resolveHttpUrl(value) {
       if (!value) return "";
       try {
@@ -381,6 +455,8 @@
       document.getElementById("release-date").textContent = String(manifest.releaseDate || "-");
       document.getElementById("apk-size").textContent = apkSize || "正式 APK";
       if (latestVersion) document.title = `练了没 ${latestVersion} - 正式版下载`;
+      activeReleaseKey = latestVersion;
+      loadDownloadCount(latestVersion);
 
       const notesElement = document.getElementById("release-notes");
       notesElement.replaceChildren();
@@ -415,6 +491,9 @@
         mirror.setAttribute("aria-disabled", "true");
         mirror.textContent = "国内镜像待配置";
       }
+
+      download.addEventListener("click", recordDownload, { passive: true });
+      mirror.addEventListener("click", recordDownload, { passive: true });
     }
 
     fetch("./version.json", { cache: "no-store" })
