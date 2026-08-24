@@ -364,10 +364,14 @@
     const DOWNLOAD_ANALYTICS_URL = "https://ngedzxmcmlqwnbbibocb.supabase.co";
     const DOWNLOAD_ANALYTICS_KEY = "sb_publishable_2d8uEyskEjsxy7yWiCYtZQ_X4i9V3Bl";
     const DOWNLOAD_VISITOR_KEY = "lianleme.download.visitor.v1";
+    const HISTORICAL_DOWNLOAD_COUNT = 17;
+    const TRACKED_COUNT_OFFSET = 16;
     let activeReleaseKey = "";
 
     function formatDownloadCount(value) {
-      const count = Math.max(0, Math.trunc(Number(value) || 0));
+      // 统计上线前已有 17 次下载；首条服务端记录来自上线验证。
+      const trackedCount = Math.max(0, Math.trunc(Number(value) || 0));
+      const count = Math.max(HISTORICAL_DOWNLOAD_COUNT, trackedCount + TRACKED_COUNT_OFFSET);
       return `${new Intl.NumberFormat("zh-CN").format(count)} 次`;
     }
 
